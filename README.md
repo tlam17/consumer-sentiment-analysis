@@ -27,7 +27,7 @@ Integration:
 ### Data Analytics
 Sentiment Analysis:
   - Pre-process review text
-  - Use NLP libraries to determine sentiment polarity
+  - Use NLP libraries to determine sentiment polarity 
 Keyword Analysis:
   - Extract frequent terms and phrases
 Trends and Insights:
