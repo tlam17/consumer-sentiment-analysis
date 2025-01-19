@@ -9,7 +9,7 @@ CREATE TABLE categories (
 -- Products Table
 CREATE TABLE products (
     product_id VARCHAR(255) PRIMARY KEY,
-    name VARCHAR(255) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
     category_id INTEGER REFERENCES categories(category_id) ON DELETE SET NULL,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -22,7 +22,7 @@ CREATE TABLE reviews (
     product_id VARCHAR(255) REFERENCES products(product_id) ON DELETE CASCADE,
     rating INTEGER CHECK (rating >= 0 AND rating <= 5) NOT NULL,
     review_text TEXT NOT NULL,
-    sentiment_score NUMERIC(3, 2) CHECK (sentiment_score >= -1 AND sentiment_score <= 1) NOT NULL,
+    sentiment_score NUMERIC(3, 2) CHECK (sentiment_score >= -1 AND sentiment_score <= 1),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
