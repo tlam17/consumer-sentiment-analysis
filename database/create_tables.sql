@@ -8,7 +8,7 @@ CREATE TABLE categories (
 
 -- Products Table
 CREATE TABLE products (
-    product_id VARCHAR(255) PRIMARY KEY,
+    product_id VARCHAR(255) DEFAULT gen_random_uuid()::text PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     category_id INTEGER REFERENCES categories(category_id) ON DELETE SET NULL,
     description TEXT,

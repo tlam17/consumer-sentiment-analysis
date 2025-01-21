@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
+const productsRoutes = require("./routes/productsRoutes");
 
-app.get("/", (req, res) => res.send("Hello, world!"));
+app.use(express.json());
+app.use("/products", productsRoutes);
 
 const PORT = 3000;
 app.listen(PORT, () => {
