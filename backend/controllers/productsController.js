@@ -68,7 +68,7 @@ const createProduct = async (req, res) => {
 const getAllProducts = async (req, res) => {
     try {
         // Join products with categories to get category name
-        const query = `SELECT p.name, p.description, p.created_at, p.updated_at, c.category_name
+        const query = `SELECT p.product_id, p.name, p.description, p.created_at, p.updated_at, c.category_name
                        FROM products p
                        LEFT JOIN categories c ON p.category_id = c.category_id`;
         
@@ -95,7 +95,7 @@ const getProductById = async (req, res) => {
         const { productId } = req.params;
         
         // Join products with categories to get detailed product information
-        const query = `SELECT p.name, p.description, p.created_at, p.updated_at, c.category_name
+        const query = `SELECT p.product_id, p.name, p.description, p.created_at, p.updated_at, c.category_name
                        FROM products p
                        LEFT JOIN categories c ON p.category_id = c.category_id
                        WHERE p.product_id = $1`;
