@@ -11,6 +11,7 @@ CREATE TABLE products (
     product_id VARCHAR(255) DEFAULT gen_random_uuid()::text PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     category_id INTEGER REFERENCES categories(category_id) ON DELETE SET NULL,
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -20,6 +21,7 @@ CREATE TABLE products (
 CREATE TABLE reviews (
     review_id SERIAL PRIMARY KEY,
     product_id VARCHAR(255) REFERENCES products(product_id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
     rating INTEGER CHECK (rating >= 0 AND rating <= 5) NOT NULL,
     review_text TEXT NOT NULL,
     sentiment_score NUMERIC(3, 2) CHECK (sentiment_score >= -1 AND sentiment_score <= 1),
