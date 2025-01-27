@@ -3,6 +3,7 @@
 -- Categories Table (moved to top since it's referenced by products)
 CREATE TABLE categories (
     category_id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
     category_name VARCHAR(100) UNIQUE NOT NULL
 );
 
