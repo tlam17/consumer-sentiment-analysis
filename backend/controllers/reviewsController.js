@@ -11,10 +11,11 @@ const createReview = async (req, res) => {
     try {
         // Destructure review details from request body
         const {product_id, rating, review_text} = req.body;
+        const user_id = req.userId;
 
         // Insert new review and return its details
-        const query = "INSERT INTO reviews (product_id, rating, review_text) VALUES ($1, $2, $3) RETURNING *";
-        const result = await pool.query(query, [product_id, rating, review_text]);
+        const query = "INSERT INTO reviews (product_id, user_id, rating, review_text) VALUES ($1, $2, $3, $4) RETURNING *";
+        const result = await pool.query(query, [product_id, user_id, rating, review_text]);
         
         // Return created review
         res.status(201).json(result.rows[0]);
@@ -26,7 +27,7 @@ const createReview = async (req, res) => {
 };
 
 /**
- * Retrieve all reviews
+ * Retrieve all reviews associated with a user
  * 
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -34,11 +35,14 @@ const createReview = async (req, res) => {
  */
 const getAllReviews = async (req, res) => {
     try {
+        const user_id = req.userId;
+
         // Fetch all reviews, ordered by most recent
         const query = `SELECT review_id, product_id, rating, review_text, created_at, updated_at
                        FROM reviews
+                       WHERE user_id = $1
                        ORDER BY created_at DESC`;
-        const result = await pool.query(query);
+        const result = await pool.query(query, [user_id]);
 
         // Check if any reviews exist
         if (result.rows.length === 0) {

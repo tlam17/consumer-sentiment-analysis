@@ -30,8 +30,13 @@ const authenticateToken = (req, res, next) => {
 
   // Verify the token
   try {
-    const userId = verifyToken(token);
-    req.userId = userId;
+    const decoded = verifyToken(token);
+    
+    // Attach user ID to request object
+    if (!decoded) {
+        return res.status(403).json({ message: "Forbidden: Invalid or expired token" });
+    }
+    req.userId = decoded.userId;
   } catch (error) {
     return res.status(401).json({ 
       message: "Unauthorized: Invalid token" 
