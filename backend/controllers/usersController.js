@@ -1,14 +1,15 @@
-const pool = require("../database/pool");
+const pool = require("../config/pool");
 const argon2 = require("argon2");
+const { generateToken } = require("../config/jwtConfig");
 
 /**
- * Create a new user in the database
+ * Register a new user in the database
  * 
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @returns {Object} Created user details or error message
  */
-const createUser = async (req, res) => {
+const registerUser = async (req, res) => {
     try {
         // Destructure user details from request body
         const { username, email, password } = req.body;
@@ -26,6 +27,44 @@ const createUser = async (req, res) => {
         // Log and return error if user creation fails
         console.log(error);
         res.status(500).json({ message: "Error creating user" });
+    }
+};
+
+/**
+ * Login a user and generate JWT token
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Object} JWT token and user details or error message
+ */
+const loginUser = async (req, res) => {
+    try {
+        // Destructure user credentials from request body
+        const { identifier, password } = req.body;
+
+        // Find user by email or username
+        const query = "SELECT user_id, username, email, password_hash FROM users WHERE email = $1 OR username = $1";
+        const result = await pool.query(query, [identifier]);
+
+        if (result.rows.length === 0) { 
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Verify password
+        const user = result.rows[0];
+        const isPasswordValid = await argon2.verify(user.password_hash, password);
+
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: "Invalid password" });
+        }
+
+        // Generate JWT token
+        const token = generateToken(user.user_id);
+        res.status(200).json({ token, user });
+    } catch (error) {
+        // Log and return error if login fails
+        console.log(error);
+        res.status(500).json({ message: "Error logging in" });
     }
 };
 
@@ -142,7 +181,8 @@ const getUserCredentials = async (req, res) => {
 };
 
 module.exports = {
-    createUser,
+    registerUser,
+    loginUser,
     updateUser,
     deleteUser,
     getUserCredentials

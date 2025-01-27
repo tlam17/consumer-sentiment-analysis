@@ -1,4 +1,4 @@
-const pool = require("../database/pool");
+const pool = require("../config/pool");
 
 /**
  * Create a new review in the database
