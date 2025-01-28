@@ -8,9 +8,9 @@ router.post("/", authMiddleware.authenticateToken, reviewsController.createRevie
 // Get all reviews
 router.get("/", authMiddleware.authenticateToken, reviewsController.getAllReviews);
 // Get reviews by product
-router.get("/product/:productId", reviewsController.getReviewsByProduct);
+router.get("/product/:productId", authMiddleware.authenticateToken, reviewsController.getReviewsByProduct);
 // Get a single review by ID
-router.get("/:reviewId", reviewsController.getReviewById);
+router.get("/:reviewId", authMiddleware.authenticateToken, reviewsController.getReviewById);
 // Update a review
 router.put("/:reviewId", authMiddleware.authenticateToken, reviewsController.updateReview);
 // Delete a review

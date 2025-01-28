@@ -11,13 +11,14 @@ const createProduct = async (req, res) => {
     try {
         // Destructure product details from request body
         const {product_id, name, category, description} = req.body;
+        const user_id = req.userId;
 
         // Start a database transaction to ensure data integrity
         await pool.query('BEGIN');
 
         // Attempt to insert new category if it doesn't exist
-        const categoryQuery = "INSERT INTO categories (category_name) VALUES ($1) ON CONFLICT (category_name) DO NOTHING RETURNING category_id";
-        const categoryResult = await pool.query(categoryQuery, [category]);
+        const categoryQuery = "INSERT INTO categories (category_name, user_id) VALUES ($1, $2) ON CONFLICT (category_name) DO NOTHING RETURNING category_id";
+        const categoryResult = await pool.query(categoryQuery, [category, user_id]);
 
         let categoryId;
         if (categoryResult.rows.length > 0) {
@@ -36,12 +37,12 @@ const createProduct = async (req, res) => {
         // Check if a specific product_id is provided
         if (product_id) {
             // If product_id is given, include it in the insert query
-            query = "INSERT INTO products (product_id, name, category_id, description) VALUES ($1, $2, $3, $4) RETURNING *";
-            params = [product_id, name, categoryId, description];
+            query = "INSERT INTO products (product_id, user_id, name, category_id, description) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+            params = [product_id, user_id, name, categoryId, description];
         } else {
             // If no product_id, let the database generate a default UUID
-            query = "INSERT INTO products (name, category_id, description) VALUES ($1, $2, $3) RETURNING *";
-            params = [name, categoryId, description];
+            query = "INSERT INTO products (user_id, name, category_id, description) VALUES ($1, $2, $3, $4) RETURNING *";
+            params = [user_id, name, categoryId, description];
         }
 
         // Execute the insert query and return the created product
@@ -59,7 +60,7 @@ const createProduct = async (req, res) => {
 };
 
 /**
- * Retrieve all products with their category information
+ * Retrieve all products associated with the current user with their category information
  * 
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
@@ -67,13 +68,16 @@ const createProduct = async (req, res) => {
  */
 const getAllProducts = async (req, res) => {
     try {
+        const user_id = req.userId;
+
         // Join products with categories to get category name
         const query = `SELECT p.product_id, p.name, p.description, p.created_at, p.updated_at, c.category_name
                        FROM products p
-                       LEFT JOIN categories c ON p.category_id = c.category_id`;
+                       LEFT JOIN categories c ON p.category_id = c.category_id
+                       WHERE p.user_id = $1`;
         
         // Execute query and return results
-        const result = await pool.query(query);
+        const result = await pool.query(query, [user_id]);
         res.json(result.rows);
     } catch (error) {
         // Log and return error if fetching products fails
@@ -121,6 +125,8 @@ const getProductById = async (req, res) => {
  */
 const updateProduct = async (req, res) => {
     try {
+        const user_id = req.userId;
+
         // Extract product ID from route parameters
         const { productId } = req.params;
         
@@ -131,8 +137,8 @@ const updateProduct = async (req, res) => {
         await pool.query('BEGIN');
         
         // Attempt to insert new category if it doesn't exist
-        const categoryQuery = "INSERT INTO categories (category_name) VALUES ($1) ON CONFLICT (category_name) DO NOTHING RETURNING category_id";
-        const categoryResult = await pool.query(categoryQuery, [category]);
+        const categoryQuery = "INSERT INTO categories (category_name, user_id) VALUES ($1, $2) ON CONFLICT (category_name) DO NOTHING RETURNING category_id";
+        const categoryResult = await pool.query(categoryQuery, [category, user_id]);
         
         let categoryId;
         if (categoryResult.rows.length > 0) {
