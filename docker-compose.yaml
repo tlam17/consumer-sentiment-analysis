@@ -1,4 +1,19 @@
 services:
+
+  backend:
+    container_name: cad-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - database
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:${POSTGRES_PORT}/${POSTGRES_DB}
+    networks:
+      - postgres-network
+
   database:
     container_name: cad-postgres
     image: postgres
