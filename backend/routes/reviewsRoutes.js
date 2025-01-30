@@ -5,6 +5,8 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 // Create a new review
 router.post("/", authMiddleware.authenticateToken, reviewsController.createReview);
+// Upload bulk reviews
+router.post("/upload", authMiddleware.authenticateToken, reviewsController.upload.single("file"), reviewsController.uploadReviews);
 // Get all reviews
 router.get("/", authMiddleware.authenticateToken, reviewsController.getAllReviews);
 // Get reviews by product

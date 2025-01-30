@@ -1,5 +1,4 @@
 services:
-
   backend:
     container_name: cad-backend
     build:

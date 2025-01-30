@@ -1,4 +1,10 @@
 const pool = require("../config/pool");
+const csv = require("fast-csv");
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
+
+const upload = multer({ dest: "uploads/" });
 
 /**
  * Create a new review in the database
@@ -23,6 +29,64 @@ const createReview = async (req, res) => {
         // Log and return error if review creation fails
         console.log(error);
         res.status(500).json({ message: "Error creating review" });
+    }
+};
+
+/**
+ * Upload bulk review data through CSV
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Object} Created review details or error message
+ */
+const uploadReviews = async (req, res) => {
+    try {
+        const user_id = req.userId;
+
+        if (!req.file) {
+            return res.status(400).json({ message: "No file uploaded" });
+        }
+        
+        const filePath = path.join(__dirname, "../", req.file.path);
+        const reviews = [];
+
+        fs.createReadStream(filePath)
+        .pipe(csv.parse({ headers: true }))
+        .on("data", (row) => {
+            const {product_id, rating, review_text} = row;
+            if (product_id && rating && review_text) {
+                reviews.push({product_id, rating, review_text});
+            }   
+        })
+        .on("end", async () => { 
+            try {
+                // Check if any reviews were processed
+                if (reviews.length === 0) {
+                    return res.status(400).json({ message: "CSV file is empty or incorrectly formatted" });
+                }
+                // Insert new reviews and return their details
+                const query = "INSERT INTO reviews (product_id, user_id, rating, review_text) VALUES ($1, $2, $3, $4) RETURNING *";
+                const results = Promise.all(reviews.map(review => pool.query(query, [review.product_id, user_id, review.rating, review.review_text])));
+                
+                // Delete uploaded CSV file
+                fs.unlinkSync(filePath);
+
+                res.status(201).json(results);
+            } catch (error) {
+                // Log and return error if review creation fails
+                console.log(error);
+                res.status(500).json({ message: "Error inserting reviews" });
+            }
+        })
+        .on("error", (error) => {
+            // Log and return error if CSV parsing fails
+            console.log(error);
+            res.status(500).json({ message: "Error processing CSV file" });
+        });
+    } catch (error) {
+        // Log and return error if review upload fails
+        console.log(error);
+        res.status(500).json({ message: "Error uploading reviews" });
     }
 };
 
@@ -178,6 +242,8 @@ const deleteReview = async (req, res) => {
 
 module.exports = {
     createReview,
+    upload,
+    uploadReviews,
     getAllReviews,
     getReviewsByProduct,
     getReviewById,
