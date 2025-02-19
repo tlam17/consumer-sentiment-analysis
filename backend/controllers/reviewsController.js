@@ -1,4 +1,4 @@
-const pool = require("../config/pool");
+const pool = require("../../backend/config/pool");
 const csv = require("fast-csv");
 const multer = require("multer");
 const fs = require("fs");

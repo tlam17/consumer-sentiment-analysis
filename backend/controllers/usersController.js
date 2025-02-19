@@ -1,6 +1,6 @@
-const pool = require("../config/pool");
+const pool = require("../../backend/config/pool");
 const argon2 = require("argon2");
-const { generateToken } = require("../config/jwtConfig");
+const { generateToken } = require("../../backend/config/jwtConfig");
 
 /**
  * Register a new user in the database
@@ -64,7 +64,7 @@ const loginUser = async (req, res) => {
     } catch (error) {
         // Log and return error if login fails
         console.log(error);
-        res.status(500).json({ message: "Error logging in" });
+        res.status(500).json({ message: error });
     }
 };
 

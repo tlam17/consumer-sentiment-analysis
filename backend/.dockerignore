@@ -1,0 +1,52 @@
+# Dependency directories
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Git and version control
+.git
+.gitignore
+
+# Testing
+coverage
+*.test.js
+*.spec.js
+
+# Development files
+README.md
+CONTRIBUTING.md
+CHANGELOG.md
+
+# Logs
+logs
+*.log
+
+# Temporary files
+.tmp
+.temp
+
+# Editor directories and files
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Build output (if applicable)
+dist
+build
+
+# Docker
+Dockerfile
+.dockerignore

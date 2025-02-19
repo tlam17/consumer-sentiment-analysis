@@ -7,9 +7,10 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - database
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:${POSTGRES_PORT}/${POSTGRES_DB}
+      database:
+        condition: service_healthy
+    env_file:
+      - .env
     networks:
       - postgres-network
 

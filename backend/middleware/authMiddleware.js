@@ -1,4 +1,4 @@
-const { verifyToken } = require("../config/jwtConfig");
+const { verifyToken } = require("../../backend/config/jwtConfig");
 
 /**
  * Middleware to authenticate requests using JWT
