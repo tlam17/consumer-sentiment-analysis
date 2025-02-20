@@ -64,7 +64,7 @@ const loginUser = async (req, res) => {
     } catch (error) {
         // Log and return error if login fails
         console.log(error);
-        res.status(500).json({ message: error });
+        res.status(500).json({ message: "Error logging in" });
     }
 };
 
