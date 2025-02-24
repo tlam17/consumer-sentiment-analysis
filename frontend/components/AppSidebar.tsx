@@ -16,38 +16,38 @@ import {
 const items = [
     {
       title: "Home",
-      url: "#",
+      url: "/",
       icon: House,
     },
     {
       title: "Products",
-      url: "#",
+      url: "/products",
       icon: ShoppingCart,
     },
     {
       title: "Reviews",
-      url: "#",
+      url: "/reviews",
       icon: ClipboardList,
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/settings",
       icon: Settings,
     },
   ]
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" className="sidebar">
+        <Sidebar className="sidebar">
             <SidebarHeader>
-                Title
+                <h1 className="sidebar-title">Dashboard</h1>
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {items.map((item) => (
-                                <SidebarMenuItem key={item.title}>
+                                <SidebarMenuItem key={item.title} className="sidebar-menu-item">
                                     <SidebarMenuButton asChild>
                                         <a href={item.url}>
                                             <item.icon/>

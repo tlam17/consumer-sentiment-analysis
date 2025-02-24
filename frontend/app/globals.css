@@ -7,7 +7,7 @@
 @layer base {
   :root {
 
-    --background: 0 0% 100%;
+    --background: 0 0% 91%;
 
     --foreground: 222.2 84% 4.9%;
 
@@ -57,7 +57,7 @@
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 21%;
+    --sidebar-background: 0 0% 19%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
 
@@ -174,7 +174,22 @@
     @apply text-white;
   }
 
+  /* Hover effect for sidebar menu items */
+  .sidebar a:hover {
+    background-color: #b4b4b4;
+    @apply text-black;
+  }
+
+  .sidebar a:hover svg {
+    @apply text-black;
+  }
+
   .sidebar span {
     @apply font-medium;
+  }
+
+  .sidebar-title {
+    @apply font-bold;
+    @apply text-xl;
   }
 }
