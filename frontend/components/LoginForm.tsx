@@ -8,14 +8,14 @@ export function LoginForm() {
         <Card>
             <CardHeader>
                 <CardTitle>Login</CardTitle>
-                <CardDescription>Enter your email and password</CardDescription>
+                <CardDescription>Enter your email/username and password</CardDescription>
             </CardHeader>
             <CardContent>
                 <form>
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input id="email" type="email" placeholder="Email" required />
+                            <Label htmlFor="identifier">Email/Username</Label>
+                            <Input id="identifier" type="text" placeholder="johndoe@example.com" required />
                         </div>
                         <div className="grid gap-2">
                             <div className="flex items-center">

@@ -38,16 +38,16 @@ const items = [
 
 export function AppSidebar() {
     return (
-        <Sidebar className="sidebar">
+        <Sidebar>
             <SidebarHeader>
-                <h1 className="sidebar-title">Dashboard</h1>
+                <h1>Dashboard</h1>
             </SidebarHeader>
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {items.map((item) => (
-                                <SidebarMenuItem key={item.title} className="sidebar-menu-item">
+                                <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild>
                                         <a href={item.url}>
                                             <item.icon/>
