@@ -1,5 +1,6 @@
 "use client";
 
+import api from "@/utils/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter} from "@/components/ui/card";
@@ -17,7 +18,9 @@ export function LoginForm() {
         e.preventDefault();
 
         try {
-            
+            const res = await api.post("/users/login", { identifier, password });
+            localStorage.setItem("token", res.data.token);
+            router.push("/");
         } catch (error: any) {
             toast.error(error.message);
         }
