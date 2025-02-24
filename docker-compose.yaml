@@ -1,11 +1,11 @@
 services:
   backend:
-    container_name: cad-backend
+    container_name: csad-backend
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "4000:4000"
     depends_on:
       database:
         condition: service_healthy
@@ -15,7 +15,7 @@ services:
       - postgres-network
 
   database:
-    container_name: cad-postgres
+    container_name: csad-postgres
     image: postgres
     restart: always
     environment:
@@ -35,7 +35,7 @@ services:
       - postgres-network
 
   pgadmin:
-    container_name: cad-pgadmin
+    container_name: csad-pgadmin
     image: dpage/pgadmin4
     restart: always
     environment:

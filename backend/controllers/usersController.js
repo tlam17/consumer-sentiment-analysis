@@ -1,6 +1,6 @@
-const pool = require("../../backend/config/pool");
+const pool = require("../config/pool");
 const argon2 = require("argon2");
-const { generateToken } = require("../../backend/config/jwtConfig");
+const { generateToken } = require("../config/jwtConfig");
 
 /**
  * Register a new user in the database

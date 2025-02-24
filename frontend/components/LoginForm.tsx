@@ -1,9 +1,28 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner"
 
 export function LoginForm() {
+    const [identifier, setIdentifier] = useState("");
+    const [password, setPassword] = useState("");
+    const router = useRouter();
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        try {
+            
+        } catch (error: any) {
+            toast.error(error.message);
+        }
+    }
+
     return (
         <Card>
             <CardHeader>
@@ -11,18 +30,18 @@ export function LoginForm() {
                 <CardDescription>Enter your email/username and password</CardDescription>
             </CardHeader>
             <CardContent>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-6">
                         <div className="grid gap-2">
                             <Label htmlFor="identifier">Email/Username</Label>
-                            <Input id="identifier" type="text" placeholder="johndoe@example.com" required />
+                            <Input id="identifier" type="text" placeholder="johndoe@example.com" value={identifier} onChange={(e) => setIdentifier(e.target.value)} required />
                         </div>
                         <div className="grid gap-2">
                             <div className="flex items-center">
                                 <Label htmlFor="password">Password</Label>
                                 <a className="hover:underline inline-block ml-auto text-sm" href="#">Forgot password?</a>
                             </div>
-                            <Input id="password" type="password" placeholder="Password" required />
+                            <Input id="password" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                         </div>
                         <Button type="submit" className="w-full">Login</Button>
                     </div>

@@ -9,7 +9,7 @@ app.use("/products", productsRoutes);
 app.use("/reviews", reviewsRoutes);
 app.use("/users", usersRoutes);
 
-const PORT = 3000;
+const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`Backend listening on port ${PORT}`);
 });

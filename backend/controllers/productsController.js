@@ -1,4 +1,4 @@
-const pool = require("../../backend/config/pool");
+const pool = require("../config/pool");
 
 /**
  * Create a new product in the database
