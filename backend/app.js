@@ -6,7 +6,10 @@ const reviewsRoutes = require("./routes/reviewsRoutes");
 const usersRoutes = require("./routes/usersRoutes");
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 app.use("/products", productsRoutes);
 app.use("/reviews", reviewsRoutes);
 app.use("/users", usersRoutes);
