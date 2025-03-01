@@ -23,7 +23,7 @@ export function SignupForm() {
             router.push("/login");
             toast.success("Success!", {description: "You can now login with your new credentials!"});
         } catch (error: any) {
-            toast.error(error.message);
+            toast.error("Something went wrong. Please try again.");
         }
     }
 
