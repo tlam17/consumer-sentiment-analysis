@@ -21,8 +21,9 @@ export function LoginForm() {
             const res = await api.post("/users/login", { identifier, password });
             localStorage.setItem("token", res.data.token);
             router.push("/");
+            toast.success("Login successful!");
         } catch (error: any) {
-            toast.error(error.message);
+            toast.error("Invalid credentials", {description: "Please check your email/username and password"});
         }
     }
 
@@ -51,7 +52,7 @@ export function LoginForm() {
                 </form>
             </CardContent>
             <CardFooter>
-                <p className="text-sm">Don't have an account? <a className="underline" href="#">Sign up</a></p>
+                <p className="text-sm">Don't have an account? <a className="underline" href="/signup">Sign up</a></p>
             </CardFooter>
         </Card>
     )
