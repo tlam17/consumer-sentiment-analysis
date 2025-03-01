@@ -4,7 +4,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 const usersController = require("../controllers/usersController");
 
 // Register a new user
-router.post("/", usersController.registerUser);
+router.post("/signup", usersController.registerUser);
 // Login a user and generate JWT token
 router.post("/login", usersController.loginUser);
 // Update user information
