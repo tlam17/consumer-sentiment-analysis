@@ -8,18 +8,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner"
+import { useUser } from "@/lib/UserContext";
 
 export function LoginForm() {
     const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
+    const { setUser } = useUser();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
             const res = await api.post("/users/login", { identifier, password });
+            const { user_id, username, email } = res.data.user;
+            const userData = { user_id, username, email };
+
             localStorage.setItem("token", res.data.token);
+            localStorage.setItem("userData", JSON.stringify(userData));
+            setUser(userData);
+
             router.push("/");
             toast.success("Login successful!");
         } catch (error: any) {
