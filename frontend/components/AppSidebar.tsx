@@ -1,5 +1,6 @@
-import { Settings, LogOut, ShoppingCart, ClipboardList, House } from "lucide-react"
+"use client";
 
+import { Settings, LogOut, ShoppingCart, ClipboardList, House } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -11,6 +12,9 @@ import {
     SidebarHeader,
     SidebarFooter,
   } from "@/components/ui/sidebar"
+  import { toast } from "sonner"
+  import { useRouter } from "next/navigation";
+  import { useUser } from "@/lib/UserContext";
 
 // Menu items.
 const items = [
@@ -37,6 +41,17 @@ const items = [
   ]
 
 export function AppSidebar() {
+    const router = useRouter();
+    const { setUser } = useUser();
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userData");
+        setUser(null);
+        router.push("/login");
+        toast.success("You have been successfully logged out!");
+    }
+
     return (
         <Sidebar>
             <SidebarHeader>
@@ -63,11 +78,9 @@ export function AppSidebar() {
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton asChild>
-                            <a href="#">
-                                <LogOut/>
-                                <span>Logout</span>
-                            </a>
+                        <SidebarMenuButton onClick={handleLogout}>
+                            <LogOut/>
+                            <span>Log Out</span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
