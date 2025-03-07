@@ -28,7 +28,11 @@ export function LoginForm() {
             localStorage.setItem("userData", JSON.stringify(userData));
             setUser(userData);
 
-            router.push("/");
+            // Check if there's a redirect path in storage
+            const redirectPath = sessionStorage.getItem("redirectAfterLogin") || "/dashboard";
+            sessionStorage.removeItem("redirectAfterLogin"); // Clear after use
+
+            router.push(redirectPath);
             toast.success("Login successful!");
         } catch (error: any) {
             toast.error("Invalid credentials", {description: "Please check your email/username and password"});
