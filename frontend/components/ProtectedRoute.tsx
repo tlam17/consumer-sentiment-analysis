@@ -3,7 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import { useUser } from "@/lib/UserContext";
 import { useEffect } from "react";
-import { toast } from "sonner";
+import { handleAuthRedirect } from "@/utils/auth";
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const { user } = useUser();
@@ -11,20 +11,10 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     const pathname = usePathname();
 
     useEffect(() => {
-        // Check if the user is not authenticated
-        if (!user && typeof window !== "undefined") {
-            // Check if it's a manual logout
-            const isManualLogout = sessionStorage.getItem("manualLogout") === "true";
-
-            if (!isManualLogout) {
-                toast.error("Please log in to access this page");
-            } else {
-                sessionStorage.removeItem("manualLogout");
-            }
-
-            // Store the attempted URL to redirect back after login
+        const isAuthenticated = !!user;
+        
+        if (!handleAuthRedirect(isAuthenticated)) {
             sessionStorage.setItem("redirectAfterLogin", pathname);
-            // Redirect to login page
             router.push("/login");
         }
     }, [user, pathname, router]);
