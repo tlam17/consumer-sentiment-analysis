@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@/lib/UserContext";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function PublicRoute({ children }: { children: React.ReactNode}) {

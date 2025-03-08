@@ -45,9 +45,13 @@ export function AppSidebar() {
     const { setUser } = useUser();
 
     const handleLogout = () => {
+        // Set manual logout flag
+        sessionStorage.setItem("manualLogout", "true");
         localStorage.removeItem("token");
         localStorage.removeItem("userData");
+
         setUser(null);
+        
         router.push("/login");
         toast.success("You have been successfully logged out!");
     }

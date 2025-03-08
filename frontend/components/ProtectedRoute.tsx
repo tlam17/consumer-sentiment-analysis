@@ -13,12 +13,19 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     useEffect(() => {
         // Check if the user is not authenticated
         if (!user && typeof window !== "undefined") {
+            // Check if it's a manual logout
+            const isManualLogout = sessionStorage.getItem("manualLogout") === "true";
+
+            if (!isManualLogout) {
+                toast.error("Please log in to access this page");
+            } else {
+                sessionStorage.removeItem("manualLogout");
+            }
+
             // Store the attempted URL to redirect back after login
             sessionStorage.setItem("redirectAfterLogin", pathname);
             // Redirect to login page
             router.push("/login");
-            // Show notification
-      toast.error("Please log in to access this page");
         }
     }, [user, pathname, router]);
 
