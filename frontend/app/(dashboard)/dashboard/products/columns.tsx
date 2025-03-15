@@ -4,8 +4,10 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/types/products";
 import { formatDate } from "@/utils/formatters";
 import { MoreHorizontal } from "lucide-react";
+import { ArrowUpDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,12 +38,26 @@ export const columns: ColumnDef<Product>[] = [
     },
     {
         accessorKey: "created_at",
-        header: "Created At",
+        header: ({ column }) => {
+            return (
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                    Created At
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
         cell: ({ row }) => formatDate(row.original.created_at)
     },
     {
         accessorKey: "updated_at",
-        header: "Updated At",
+        header: ({ column }) => {
+            return (
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                    Updated At
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
         cell: ({ row }) => formatDate(row.original.updated_at)
     },
     {
