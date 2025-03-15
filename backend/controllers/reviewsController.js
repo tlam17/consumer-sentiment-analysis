@@ -105,7 +105,7 @@ const getAllReviews = async (req, res) => {
         const query = `SELECT review_id, product_id, rating, review_text, created_at, updated_at
                        FROM reviews
                        WHERE user_id = $1
-                       ORDER BY created_at DESC`;
+                       ORDER BY product_id DESC`;
         const result = await pool.query(query, [user_id]);
 
         // Check if any reviews exist
