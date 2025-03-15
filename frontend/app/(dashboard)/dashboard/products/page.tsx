@@ -7,15 +7,6 @@ import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { toast } from "sonner";
 
-interface ProductResponse {
-    product_id: string;
-    name: string;
-    description: string | null;
-    created_at: string;
-    updated_at: string;
-    category_name: string | null;
-}
-
 export default function Products() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
