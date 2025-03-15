@@ -52,8 +52,7 @@ export default function Products() {
     }
 
     return (
-        <div className="container mx-auto py-10">
-            <h1 className="text-2xl font-bold mb-6">Products</h1>
+        <div className="container mx-auto py-10 px-5">
             <DataTable columns={columns} data={products} />
         </div>
     )
