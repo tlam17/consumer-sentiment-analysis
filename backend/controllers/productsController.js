@@ -74,7 +74,8 @@ const getAllProducts = async (req, res) => {
         const query = `SELECT p.product_id, p.name, p.description, p.created_at, p.updated_at, c.category_name
                        FROM products p
                        LEFT JOIN categories c ON p.category_id = c.category_id
-                       WHERE p.user_id = $1`;
+                       WHERE p.user_id = $1
+                       ORDER BY p.name ASC`;
         
         // Execute query and return results
         const result = await pool.query(query, [user_id]);
