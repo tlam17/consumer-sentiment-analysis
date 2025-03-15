@@ -7,7 +7,9 @@ export function handleAuthRedirect(isAuthenticated: boolean) {
 
         if (!isManualLogout) {
             console.log("Not authenticated");
-            toast.error("Please log in to access this page");
+            toast.error("Please log in to access this page", {
+                id: "login-required-toast",
+            });
         } else {
             sessionStorage.removeItem("manualLogout");
         }
