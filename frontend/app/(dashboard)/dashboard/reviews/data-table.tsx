@@ -41,6 +41,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { AddReviewForm } from "@/components/AddReviewForm";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -84,10 +85,7 @@ export function DataTable<TData, TValue>({
             }
             className="max-w-sm"
             />
-            <Button>
-              <Plus/>
-              Add Review
-            </Button>
+            <AddReviewForm/>
         </div>
           <div className="rounded-md border">
             <Table>
