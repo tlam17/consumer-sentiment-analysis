@@ -45,11 +45,20 @@ import { Input } from "@/components/ui/input";
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    serverPagination?: {
+        pageCount: number;
+        pageIndex: number;
+        pageSize: number;
+        totalRows: number;
+        onPageChange: (page: number) => void;
+        onPageSizeChange: (pageSize: number) => void;
+    }
 }
 
 export function DataTable<TData, TValue>({ 
     columns,
     data,
+    serverPagination
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -60,17 +69,49 @@ export function DataTable<TData, TValue>({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
         onColumnFiltersChange: setColumnFilters,
         onRowSelectionChange: setRowSelection,
         getFilteredRowModel: getFilteredRowModel(),
-        state: {
-            sorting,
-            columnFilters,
-            rowSelection
-        }
+
+        // Conditional pagination setup
+        ...(serverPagination ? {
+            // Server-side pagination setup
+            manualPagination: true,
+            pageCount: serverPagination.pageCount,
+            // Use server values for current page and page size
+            state: {
+                pagination: {
+                    pageIndex: serverPagination.pageIndex,
+                    pageSize: serverPagination.pageSize
+                }
+            },
+            // Override pagination functions to use server handlers
+            onPaginationChange: (updater) => {
+                // Extract page and pageSize from the updater
+                const newPagination = typeof updater === "function" ? updater({
+                    pageIndex: serverPagination.pageIndex,
+                    pageSize: serverPagination.pageSize
+                }) : updater;
+
+                // Call the server handlers
+                if (newPagination.pageIndex !== serverPagination.pageIndex) {
+                    serverPagination.onPageChange(newPagination.pageIndex + 1);
+                }
+                if (newPagination.pageSize !== serverPagination.pageSize) {
+                    serverPagination.onPageSizeChange(newPagination.pageSize);
+                }
+            }
+        } : {
+            // Client-side pagination
+            getPaginationRowModel: getPaginationRowModel(),
+            state: {
+                sorting,
+                columnFilters,
+                rowSelection
+            }
+        })
     })
 
     return (
@@ -135,8 +176,10 @@ export function DataTable<TData, TValue>({
           </div>
           <div className="flex items-center justify-end space-x-2 py-4">
             <div className="flex-1 text-sm text-muted-foreground">
-              {table.getFilteredSelectedRowModel().rows.length} of{" "}
-              {table.getFilteredRowModel().rows.length} row(s) selected.
+                {serverPagination 
+                    ? `${table.getFilteredSelectedRowModel().rows.length} of ${serverPagination.totalRows} row(s) selected.`
+                    : `${table.getFilteredSelectedRowModel().rows.length} of ${table.getFilteredRowModel().rows.length} row(s) selected.`
+                }
             </div>
             <div className="flex items-center space-x-6 lg:space-x-8">
               <div className="flex items-center space-x-2">

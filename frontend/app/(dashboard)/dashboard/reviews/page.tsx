@@ -12,12 +12,46 @@ export default function Reviews() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    // Add pagination state
+    const [pagination, setPagination] = useState({
+        page: 1,
+        limit: 10,
+        total: 0,
+        pages: 0
+    });
+
+    const handlePageChange = (page: number) => {
+        setPagination(prev => ({ ...prev, page }));
+    };
+
+    const handlePageSizeChange = (pageSize: number) => {
+        setPagination(prev => ({ ...prev, limit: pageSize, page: 1})); // Reset to page 1 when changing page size
+    }
+
     useEffect(() => {
         const fetchReviews = async () => {
             try {
                 setLoading(true);
-                const res = await api.get("/reviews");
-                setReviews(res.data);
+
+                const res = await api.get("/reviews", {
+                    params: {
+                        page: pagination.page,
+                        limit: pagination.limit
+                    }
+                });
+
+                // Check if pagination data is present
+                if (res.data.pagination) {
+                    setPagination(prev => ({
+                        ...prev,
+                        total: res.data.pagination.total || 0,
+                        pages: res.data.pagination.pages || 0
+                    }));
+                } else {
+                    // Fallback if the structure is different
+                    setReviews(Array.isArray(res.data) ? res.data : []);
+                }
+
                 setError(null);
             } catch (error: any) {
                 console.error("Error loading reviews:", error);
@@ -30,7 +64,7 @@ export default function Reviews() {
 
         fetchReviews();
 
-    }, []);
+    }, [pagination.page, pagination.limit]); // Re-fetch reviews when pagination changes
 
     // Show loading state
     if (loading) {
@@ -44,7 +78,18 @@ export default function Reviews() {
 
     return (
         <div className="container mx-auto py-10 px-5">
-            <DataTable columns={columns} data={reviews} />
+            <DataTable 
+                columns={columns} 
+                data={reviews} 
+                serverPagination={{
+                    pageCount: pagination.pages,
+                    pageIndex: pagination.page - 1,
+                    pageSize: pagination.limit,
+                    totalRows: pagination.total,
+                    onPageChange: handlePageChange,
+                    onPageSizeChange: handlePageSizeChange
+                }}
+            />
         </div>
     )
 }

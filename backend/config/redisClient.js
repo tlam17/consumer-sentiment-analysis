@@ -15,6 +15,12 @@ redisClient.on("connect", () => {
 });
 
 // Connect to Redis
-await redisClient.connect();
+try {
+    await redisClient.connect();
+} catch (err) {
+    console.error('Failed to connect to Redis:', err);
+    // Allow the application to continue without Redis
+    console.log('Application will continue without Redis caching');
+}
 
 module.exports = redisClient;

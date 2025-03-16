@@ -1,4 +1,5 @@
 const pool = require("../config/pool");
+const redisClient = require("../config/redisClient");
 const csv = require("fast-csv");
 const multer = require("multer");
 const fs = require("fs");
@@ -101,20 +102,61 @@ const getAllReviews = async (req, res) => {
     try {
         const user_id = req.userId;
 
-        // Fetch all reviews, ordered by most recent
-        const query = `SELECT review_id, product_id, rating, review_text, created_at, updated_at
+        // Get pagination parameters from request query
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        // Create a cache key that includes pagination parameters
+        const cacheKey = `reviews:user:${user_id}:page:${page}:limit:${limit}`;
+
+        // Try to get data from Redis cache first
+        const cachedData = await redisClient.get(cacheKey);
+
+        if (cachedData) {
+            // If cache hit, return the cached data
+            console.log("Cache hit for:", cacheKey);
+            return res.status(200).json(JSON.parse(cachedData));
+        }
+
+        console.log("Cache miss for:", cacheKey);
+
+       // If cache miss, get the total count first for pagination
+       const countQuery = `SELECT COUNT(*) FROM reviews WHERE user_id = $1`;
+       const countResult = await pool.query(countQuery, [user_id]);
+       const total = parseInt(countResult.rows[0].count);
+
+       // Then get the paginated data
+       const query = `SELECT review_id, product_id, rating, review_text, created_at, updated_at
                        FROM reviews
                        WHERE user_id = $1
-                       ORDER BY product_id DESC`;
-        const result = await pool.query(query, [user_id]);
+                       ORDER BY product_id DESC
+                       LIMIT $2 OFFSET $3`;
+        const result = await pool.query(query, [user_id, limit, offset]);
 
         // Check if any reviews exist
-        if (result.rows.length === 0) {
+        if (result.rows.length === 0 && page > 1) {
             return res.status(404).json({ message: "No reviews found" });
         }
 
+        // Construct response with pagination metadata
+        const response = {
+            reviews: result.rows,
+            pagination: {
+                total,
+                page,
+                limit,
+                pages: Math.ceil(total / limit)
+            }
+        };
+
+        // Cache the response in Redis (with 1 hour TTL)
+        await redisClient.set(cacheKey, JSON.stringify(response), {
+            EX: 3600 // 1 hour
+        });
+
         // Return list of reviews
-        res.status(200).json(result.rows);
+        res.status(200).json(response);
     } catch (error) {
         // Log and return error if fetching reviews fails
         console.log(error);
