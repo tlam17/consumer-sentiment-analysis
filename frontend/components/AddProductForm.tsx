@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import api from "@/utils/api";
+import { useProducts } from "@/lib/ProductContext";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +26,8 @@ export function AddProductForm() {
     const [product_category, setProductCategory] = useState("");
     const [product_description, setProductDescription] = useState("");
 
+    const { refetchProducts } = useProducts();
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -35,12 +38,15 @@ export function AddProductForm() {
                category: product_category, 
                description: product_description 
             });
+            
             toast.success("Product added successfully");
             setProductId("");
             setProductName("");
             setProductCategory("");
             setProductDescription("");
             setOpen(false);
+
+            await refetchProducts();
         } catch (error: any) {
             toast.error("Failed to add product", {description: error.message});
         }
