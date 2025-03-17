@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import api from "@/utils/api";
+import { useReviews } from "@/lib/ReviewContext";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +32,8 @@ export function AddReviewForm() {
     const [rating, setRating] = useState(0);
     const [review_text, setReviewText] = useState("");
 
+    const { refetchReviews } = useReviews();
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -46,6 +49,8 @@ export function AddReviewForm() {
             setRating(0);
             setReviewText("");
             setOpen(false);
+
+            await refetchReviews();
         } catch (error: any) {
             toast.error("Failed to add review", {description: error.message});
         }
