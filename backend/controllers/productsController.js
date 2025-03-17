@@ -1,4 +1,10 @@
 const pool = require("../config/pool");
+const csv = require("fast-csv");
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
+
+const upload = multer({ dest: "uploads/" });
 
 /**
  * Create a new product in the database
