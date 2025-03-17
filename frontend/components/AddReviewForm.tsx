@@ -21,6 +21,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -63,41 +69,46 @@ export function AddReviewForm() {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Add Review</DialogTitle>
-                    <DialogDescription>
-                        Add a new review to the database.
-                    </DialogDescription>
+                    <DialogTitle>Add Reviews</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit}>
-                    <div className="flex flex-col gap-6">
-                        <div className="grid gap-2">
-                            <Label htmlFor="product_id">Product ID</Label>
-                            <Input id="product_id" type="text" placeholder="Enter product ID associated with the review" value={product_id} onChange={(e) => setProductId(e.target.value)} />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="rating">Rating</Label>
-                            <Select value={rating === 0 ? "" : rating.toString()} onValueChange={(value) => setRating(Number(value))}>
-                                <SelectTrigger>
-                                    <SelectValue id="rating" placeholder="Select rating" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="1">1</SelectItem>
-                                    <SelectItem value="2">2</SelectItem>
-                                    <SelectItem value="3">3</SelectItem>
-                                    <SelectItem value="4">4</SelectItem>
-                                    <SelectItem value="5">5</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="review_text">Review Text</Label>
-                            <Textarea id="review_text" placeholder="Enter your review text" value={review_text} onChange={(e) => setReviewText(e.target.value)} />
-                        </div>
-                        <DialogFooter>
-                            <Button type="submit">Save</Button>
-                        </DialogFooter>
-                    </div>
-                </form>
+                <Tabs>
+                    <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="review">Single Review</TabsTrigger>
+                        <TabsTrigger value="reviews">Bulk Upload</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="review">
+                        <form onSubmit={handleSubmit}>
+                            <div className="flex flex-col gap-6 py-5">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="product_id">Product ID</Label>
+                                <Input id="product_id" type="text" placeholder="Enter product ID associated with the review" value={product_id} onChange={(e) => setProductId(e.target.value)} />
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="rating">Rating</Label>
+                                <Select value={rating === 0 ? "" : rating.toString()} onValueChange={(value) => setRating(Number(value))}>
+                                    <SelectTrigger>
+                                        <SelectValue id="rating" placeholder="Select rating" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="1">1</SelectItem>
+                                        <SelectItem value="2">2</SelectItem>
+                                        <SelectItem value="3">3</SelectItem>
+                                        <SelectItem value="4">4</SelectItem>
+                                        <SelectItem value="5">5</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="review_text">Review Text</Label>
+                                <Textarea id="review_text" placeholder="Enter your review text" value={review_text} onChange={(e) => setReviewText(e.target.value)} />
+                            </div>
+                            <DialogFooter>
+                                <Button type="submit">Save</Button>
+                            </DialogFooter>
+                            </div>
+                        </form>
+                    </TabsContent>
+                </Tabs>
             </DialogContent>
         </Dialog>
     )
