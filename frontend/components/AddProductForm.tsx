@@ -28,7 +28,7 @@ export function AddProductForm() {
         e.preventDefault();
 
         try {
-            const res = await api.post("/products", { 
+            await api.post("/products", { 
                product_id, 
                name: product_name, 
                category: product_category, 
