@@ -27,8 +27,7 @@ import {
     ChevronLeft,
     ChevronRight,
     ChevronsLeft,
-    ChevronsRight,
-    Plus,
+    ChevronsRight
 } from "lucide-react";
 
 import {
