@@ -15,7 +15,7 @@ services:
       - postgres-network
 
   database:
-    container_name: csad-postgres
+    container_name: csad-database
     image: postgres
     restart: always
     environment:
