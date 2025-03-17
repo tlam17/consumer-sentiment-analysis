@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 export function AddProductForm() { 
+    const [open, setOpen] = useState(false);
     const [product_id, setProductId] = useState("");
     const [product_name, setProductName] = useState("");
     const [product_category, setProductCategory] = useState("");
@@ -39,13 +40,14 @@ export function AddProductForm() {
             setProductName("");
             setProductCategory("");
             setProductDescription("");
+            setOpen(false);
         } catch (error: any) {
             toast.error("Failed to add product", {description: error.message});
         }
     }
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button>Add Product</Button>
             </DialogTrigger>
