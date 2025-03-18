@@ -32,8 +32,13 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setProducts(res.data);
         setError(null);
       } catch (error: any) {
-        console.error("Error loading products:", error);
-        setError("Failed to load products");
+        // If it's a 404, it just means there are no products yet
+        if (error.response && error.response.status === 404) {
+          setProducts([]);
+          setError(null);
+        } else {
+          setError("Failed to load products. Please try again later.");
+        }
       } finally {
         setLoading(false);
       }
