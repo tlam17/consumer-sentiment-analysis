@@ -26,6 +26,15 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
+import {
+    Dropzone,
+    DropzoneDescription,
+    DropzoneGroup,
+    DropzoneInput,
+    DropzoneTitle,
+    DropzoneUploadIcon,
+    DropzoneZone,
+} from "@/components/ui/dropzone"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -106,6 +115,24 @@ export function AddReviewForm() {
                             </DialogFooter>
                             </div>
                         </form>
+                    </TabsContent>
+                    <TabsContent value="reviews">
+                        <Dropzone accept={{"text/csv": [".csv"]}} onDropAccepted={(files) => console.log(files)}>
+                            <div className="grid gap-4">
+                            <DropzoneZone>
+                                <DropzoneInput />
+                                <DropzoneGroup className="gap-4">
+                                    <DropzoneUploadIcon />
+                                    <DropzoneGroup>
+                                        <DropzoneTitle>Drop CSV file here or click to upload</DropzoneTitle>
+                                        <DropzoneDescription>
+                                            Each row should have product_id, rating, and review_text columns.
+                                        </DropzoneDescription>
+                                    </DropzoneGroup>
+                                </DropzoneGroup>
+                            </DropzoneZone>
+                            </div>
+                        </Dropzone>
                     </TabsContent>
                 </Tabs>
             </DialogContent>
