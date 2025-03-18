@@ -35,8 +35,13 @@ export const ReviewProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             setReviews(res.data);
             setError(null);
         } catch (error: any) {
-            console.error("Error loading reviews:", error);
-            setError("Failed to load reviews");
+            // If it's a 404, it just means there are no reviews yet
+            if (error.response && error.response.status === 404) {
+                setReviews([]);
+                setError(null);
+            } else {
+                setError("Failed to load reviews. Please try again later.");
+            }
         } finally {
             setLoading(false);
         }
