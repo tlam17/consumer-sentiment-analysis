@@ -203,7 +203,7 @@ export function AddReviewForm() {
                                 </FileList>
                                 </div>
                             </Dropzone>
-                            <DialogFooter>
+                            <DialogFooter className="py-4">
                                 <Button type="submit" onClick={handleBulkUpload}>Upload Reviews</Button>
                             </DialogFooter>
                         </form>
