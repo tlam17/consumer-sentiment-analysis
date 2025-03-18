@@ -35,19 +35,35 @@ import {
     DropzoneUploadIcon,
     DropzoneZone,
 } from "@/components/ui/dropzone"
+import {
+    FileList,
+    FileListDescription,
+    FileListHeader,
+    FileListIcon,
+    FileListInfo,
+    FileListActions,
+    FileListAction,
+    FileListItem,
+    FileListName,
+    FileListSize,
+} from "@/components/ui/file-list"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { Trash } from "lucide-react";
 
 export function AddReviewForm() { 
     const [open, setOpen] = useState(false);
     const [product_id, setProductId] = useState("");
     const [rating, setRating] = useState(0);
     const [review_text, setReviewText] = useState("");
+    // State for the CSV file in bulk upload
+    const [bulkFile, setBulkFile] = useState<File | null>(null);
 
     const { refetchReviews } = useReviews();
 
+    // Handle single review submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -64,11 +80,44 @@ export function AddReviewForm() {
             setReviewText("");
             setOpen(false);
 
+            // Refetch reviews after adding a new review
             await refetchReviews();
         } catch (error: any) {
             toast.error("Failed to add review", {description: error.message});
         }
     }
+
+    // Handle bulk upload of reviews
+    const handleBulkUpload = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!bulkFile) {
+            toast.error("Please select a CSV file");
+            return;
+        }
+
+        // Create form data for file upload
+        const formData = new FormData();
+        formData.append("file", bulkFile);
+
+        try {
+            await api.post("/reviews/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+
+            toast.success("Reviews uploaded successfully");
+            setBulkFile(null);
+            setOpen(false);
+
+            // Refetch reviews after uploading new reviews
+            await refetchReviews();
+        } catch (error: any) {
+            toast.error("Failed to upload reviews", {description: error.message});
+        }
+    }
+
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -111,28 +160,53 @@ export function AddReviewForm() {
                                 <Textarea id="review_text" placeholder="Enter your review text" value={review_text} onChange={(e) => setReviewText(e.target.value)} />
                             </div>
                             <DialogFooter>
-                                <Button type="submit">Save</Button>
+                                <Button type="submit">Add Review</Button>
                             </DialogFooter>
                             </div>
                         </form>
                     </TabsContent>
                     <TabsContent value="reviews">
-                        <Dropzone accept={{"text/csv": [".csv"]}} onDropAccepted={(files) => console.log(files)}>
-                            <div className="grid gap-4">
-                            <DropzoneZone>
-                                <DropzoneInput />
-                                <DropzoneGroup className="gap-4">
-                                    <DropzoneUploadIcon />
-                                    <DropzoneGroup>
-                                        <DropzoneTitle>Drop CSV file here or click to upload</DropzoneTitle>
-                                        <DropzoneDescription>
-                                            Each row should have product_id, rating, and review_text columns.
-                                        </DropzoneDescription>
+                        <form onSubmit={handleBulkUpload}>
+                            <Dropzone accept={{"text/csv": [".csv"]}} onDropAccepted={(files) => setBulkFile(files[0])} maxFiles={1}>
+                                <div className="grid gap-4">
+                                <DropzoneZone>
+                                    <DropzoneInput />
+                                    <DropzoneGroup className="gap-4">
+                                        <DropzoneUploadIcon />
+                                        <DropzoneGroup>
+                                            <DropzoneTitle>Drop CSV file here or click to upload</DropzoneTitle>
+                                            <DropzoneDescription>
+                                                Each row should have product_id, rating, and review_text columns.
+                                            </DropzoneDescription>
+                                        </DropzoneGroup>
                                     </DropzoneGroup>
-                                </DropzoneGroup>
-                            </DropzoneZone>
-                            </div>
-                        </Dropzone>
+                                </DropzoneZone>
+                                <FileList>
+                                    {bulkFile && (
+                                        <FileListItem>
+                                            <FileListHeader>
+                                                <FileListIcon />
+                                                <FileListInfo>
+                                                    <FileListName>{bulkFile.name}</FileListName>
+                                                    <FileListDescription>
+                                                        <FileListSize>{bulkFile.size}</FileListSize>
+                                                    </FileListDescription>
+                                                </FileListInfo>
+                                                <FileListActions>
+                                                    <FileListAction onClick={() => setBulkFile(null)}>
+                                                        <Trash className="size-4" />
+                                                    </FileListAction>
+                                                </FileListActions>
+                                            </FileListHeader>
+                                        </FileListItem>
+                                    )}
+                                </FileList>
+                                </div>
+                            </Dropzone>
+                            <DialogFooter>
+                                <Button type="submit" onClick={handleBulkUpload}>Upload Reviews</Button>
+                            </DialogFooter>
+                        </form>
                     </TabsContent>
                 </Tabs>
             </DialogContent>
