@@ -5,6 +5,8 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 // Create a new product
 router.post("/", authMiddleware.authenticateToken, productsController.createProduct);
+// Upload bulk products
+router.post("/upload", authMiddleware.authenticateToken, productsController.upload.single("file"), productsController.uploadProducts);
 // Get all products
 router.get("/", authMiddleware.authenticateToken, productsController.getAllProducts);
 // Get a single product by ID
