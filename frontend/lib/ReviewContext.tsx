@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from "@/utils/api";
 import { Review } from "@/types/reviews";
+import { toast } from 'sonner';
 
 // Define the context type
 interface ReviewContextType {
@@ -10,6 +11,7 @@ interface ReviewContextType {
     loading: boolean;
     error: string | null;
     refetchReviews: () => Promise<void>;
+    deleteReview: (reviewId: string) => Promise<void>;
 }
 
 // Create the context
@@ -18,6 +20,7 @@ const ReviewContext = createContext<ReviewContextType>({
     loading: false,
     error: null,
     refetchReviews: async () => {},
+    deleteReview: async () => {}
 });
 
 export const useReviews = () => useContext(ReviewContext);
@@ -47,13 +50,28 @@ export const ReviewProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
     };
 
+    // Delete review
+    const deleteReview = async (reviewId: string) => {
+        try {
+            await api.delete(`/reviews/${reviewId}`);
+
+            // Remove deleted review from state
+            setReviews((prevReviews) => prevReviews.filter((review) => review.review_id !== reviewId));
+
+            toast.success("Review deleted successfully!");
+        } catch (error: any) {
+            console.error("Delete error:", error);
+            toast.error("Failed to delete review. Please try again.");
+        }
+    }
+
     // Initial fetch
     useEffect(() => {
         fetchReviews();
     }, []);
 
     return (
-        <ReviewContext.Provider value={{ reviews, loading, error, refetchReviews: fetchReviews }}>
+        <ReviewContext.Provider value={{ reviews, loading, error, refetchReviews: fetchReviews, deleteReview }}>
             {children}
         </ReviewContext.Provider>
     );
