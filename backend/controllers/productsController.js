@@ -100,44 +100,52 @@ const uploadProducts = async (req, res) => {
 
                 // Process each product row concurrently
                 const insertedProducts = await Promise.all(products.map(async (product) => {
-                    // Start a transaction for each product to ensure atomicity
-                    await pool.query('BEGIN');
+                    try {
+                        // Start a transaction for each product to ensure atomicity
+                        await pool.query('BEGIN');
 
-                    const categoryQuery = "INSERT INTO categories (category_name, user_id) VALUES ($1, $2) ON CONFLICT (category_name) DO NOTHING RETURNING category_id";
-                    const categoryResult = await pool.query(categoryQuery, [product.category, user_id]);
-                    
-                    let categoryId;
-                    if (categoryResult.rows.length > 0) {
-                        // If a new category was inserted, use its ID
-                        categoryId = categoryResult.rows[0].category_id;
-                    } else {
-                        // If category already exists, fetch its existing ID
-                        const existingCategoryQuery = "SELECT category_id FROM categories WHERE category_name = $1";
-                        const existingCategoryResult = await pool.query(existingCategoryQuery, [product.category]);
-                        categoryId = existingCategoryResult.rows[0].category_id;
+                        const categoryQuery = "INSERT INTO categories (category_name, user_id) VALUES ($1, $2) ON CONFLICT (category_name) DO NOTHING RETURNING category_id";
+                        const categoryResult = await pool.query(categoryQuery, [product.category, user_id]);
+                        
+                        let categoryId;
+                        if (categoryResult.rows.length > 0) {
+                            // If a new category was inserted, use its ID
+                            categoryId = categoryResult.rows[0].category_id;
+                        } else {
+                            // If category already exists, fetch its existing ID
+                            const existingCategoryQuery = "SELECT category_id FROM categories WHERE category_name = $1";
+                            const existingCategoryResult = await pool.query(existingCategoryQuery, [product.category]);
+                            categoryId = existingCategoryResult.rows[0].category_id;
+                        }
+
+                        let query, params;
+                        // Check if a specific product_id is provided
+                        if (product.product_id) {
+                            // If product_id is given, include it in the insert query
+                            query = "INSERT INTO products (product_id, user_id, name, category_id, description) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+                            params = [product.product_id, user_id, product.name, categoryId, product.description];
+                        } else {
+                            // If no product_id, let the database generate a default UUID
+                            query = "INSERT INTO products (user_id, name, category_id, description) VALUES ($1, $2, $3, $4) RETURNING *";
+                            params = [user_id, product.name, categoryId, product.description];
+                        }
+
+                        // Execute the insert query and return the created product
+                        const result = await pool.query(query, params);
+                        await pool.query('COMMIT');
+                        return result.rows[0];
+                    } catch (error) {
+                        await pool.query('ROLLBACK');
+                        throw error;
                     }
+                }));
 
-                    let query, params;
-                    // Check if a specific product_id is provided
-                    if (product.product_id) {
-                        // If product_id is given, include it in the insert query
-                        query = "INSERT INTO products (product_id, user_id, name, category_id, description) VALUES ($1, $2, $3, $4, $5) RETURNING *";
-                        params = [product.product_id, user_id, product.name, categoryId, product.description];
-                    } else {
-                        // If no product_id, let the database generate a default UUID
-                        query = "INSERT INTO products (user_id, name, category_id, description) VALUES ($1, $2, $3, $4) RETURNING *";
-                        params = [user_id, product.name, categoryId, product.description];
-                    }
+                // Delete the uploaded CSV file after processing
+                fs.unlinkSync(filePath);
 
-                    // Execute the insert query and return the created product
-                    const result = await pool.query(query, params);
-                    await pool.query('COMMIT');
-                    return result.rows[0];
-                }))
+                res.status(201).json(insertedProducts);
             } catch (error) {
-                // Log and return error if product creation fails
                 console.log(error);
-                await pool.query('ROLLBACK');
                 res.status(500).json({ message: "Error inserting products" });
             }
         })
@@ -146,12 +154,6 @@ const uploadProducts = async (req, res) => {
             console.log(error);
             res.status(500).json({ message: "Error processing CSV file" });
         });
-
-        // Delete uploaded CSV file
-        fs.unlinkSync(filePath);
-
-        res.status(201).json(insertedProducts);
-
     } catch (error) {
         // Log and return error if product upload fails
         console.log(error);
