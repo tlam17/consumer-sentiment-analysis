@@ -19,6 +19,20 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import { useReviews } from "@/lib/ReviewContext";
+
 export const columns: ColumnDef<Review>[] = [
     {
         id: "select",
@@ -91,6 +105,7 @@ export const columns: ColumnDef<Review>[] = [
         id: "actions",
         cell: ({ row }) => {
             const review = row.original;
+            const { deleteReview } = useReviews();
             
             return (
                 <DropdownMenu>
@@ -112,9 +127,25 @@ export const columns: ColumnDef<Review>[] = [
                         <DropdownMenuItem>
                             Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            Delete
-                        </DropdownMenuItem>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                                    Delete
+                                </DropdownMenuItem>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the review from the database.
+                                    </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction onClick={() => deleteReview(review.review_id)}>Continue</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
