@@ -155,7 +155,7 @@ export function AddProductForm() {
                         </form>
                     </TabsContent>
                     <TabsContent value="products">
-                    <form onSubmit={handleBulkUpload}>
+                    <form onSubmit={handleBulkUpload} className="py-5">
                             <Dropzone accept={{"text/csv": [".csv"]}} onDropAccepted={(files) => setBulkFile(files[0])} maxFiles={1}>
                                 <div className="grid gap-4">
                                 <DropzoneZone>
