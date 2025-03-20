@@ -204,7 +204,7 @@ export function AddReviewForm() {
                                 </div>
                             </Dropzone>
                             <DialogFooter className="py-2">
-                                <Button type="submit" onClick={handleBulkUpload}>Upload Reviews</Button>
+                                <Button type="submit" onClick={handleBulkUpload}>Upload</Button>
                             </DialogFooter>
                         </form>
                     </TabsContent>

@@ -193,7 +193,7 @@ export function AddProductForm() {
                                 </div>
                             </Dropzone>
                             <DialogFooter className="py-2">
-                                <Button type="submit" onClick={handleBulkUpload}>Upload Products</Button>
+                                <Button type="submit" onClick={handleBulkUpload}>Upload</Button>
                             </DialogFooter>
                         </form>
                     </TabsContent>
