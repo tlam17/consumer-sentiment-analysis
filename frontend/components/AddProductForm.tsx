@@ -20,10 +20,32 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
+import {
+    Dropzone,
+    DropzoneDescription,
+    DropzoneGroup,
+    DropzoneInput,
+    DropzoneTitle,
+    DropzoneUploadIcon,
+    DropzoneZone,
+} from "@/components/ui/dropzone"
+import {
+    FileList,
+    FileListDescription,
+    FileListHeader,
+    FileListIcon,
+    FileListInfo,
+    FileListActions,
+    FileListAction,
+    FileListItem,
+    FileListName,
+    FileListSize,
+} from "@/components/ui/file-list"
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { Trash } from "lucide-react";
 
 export function AddProductForm() { 
     const [open, setOpen] = useState(false);
@@ -31,6 +53,8 @@ export function AddProductForm() {
     const [product_name, setProductName] = useState("");
     const [product_category, setProductCategory] = useState("");
     const [product_description, setProductDescription] = useState("");
+    // State for the CSV file in bulk upload
+    const [bulkFile, setBulkFile] = useState<File | null>(null);
 
     const { refetchProducts } = useProducts();
 
@@ -56,7 +80,37 @@ export function AddProductForm() {
         } catch (error: any) {
             toast.error("Failed to add product", {description: error.message});
         }
-    }
+    };
+
+    const handleBulkUpload = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!bulkFile) {
+            toast.error("Please select a CSV file");
+            return;
+        }
+
+        // Create form data for file upload
+        const formData = new FormData();
+        formData.append("file", bulkFile);
+
+        try {
+            await api.post("/products/upload", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            });
+
+            toast.success("Products uploaded successfully!");
+            setBulkFile(null);
+            setOpen(false);
+
+            // Refetch products after uploading new products
+            await refetchProducts();
+        } catch (error: any) {
+            toast.error("Failed to upload products", {description: error.message});
+        }
+    };
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -98,6 +152,49 @@ export function AddProductForm() {
                                     <Button type="submit">Save</Button>
                                 </DialogFooter>
                             </div>
+                        </form>
+                    </TabsContent>
+                    <TabsContent value="products">
+                    <form onSubmit={handleBulkUpload}>
+                            <Dropzone accept={{"text/csv": [".csv"]}} onDropAccepted={(files) => setBulkFile(files[0])} maxFiles={1}>
+                                <div className="grid gap-4">
+                                <DropzoneZone>
+                                    <DropzoneInput />
+                                    <DropzoneGroup className="gap-4">
+                                        <DropzoneUploadIcon />
+                                        <DropzoneGroup>
+                                            <DropzoneTitle>Drop CSV file here or click to upload</DropzoneTitle>
+                                            <DropzoneDescription>
+                                                Each row should have product_id, name, category, and description columns.
+                                            </DropzoneDescription>
+                                        </DropzoneGroup>
+                                    </DropzoneGroup>
+                                </DropzoneZone>
+                                <FileList>
+                                    {bulkFile && (
+                                        <FileListItem>
+                                            <FileListHeader>
+                                                <FileListIcon />
+                                                <FileListInfo>
+                                                    <FileListName>{bulkFile.name}</FileListName>
+                                                    <FileListDescription>
+                                                        <FileListSize>{bulkFile.size}</FileListSize>
+                                                    </FileListDescription>
+                                                </FileListInfo>
+                                                <FileListActions>
+                                                    <FileListAction onClick={() => setBulkFile(null)}>
+                                                        <Trash className="size-4" />
+                                                    </FileListAction>
+                                                </FileListActions>
+                                            </FileListHeader>
+                                        </FileListItem>
+                                    )}
+                                </FileList>
+                                </div>
+                            </Dropzone>
+                            <DialogFooter className="py-4">
+                                <Button type="submit" onClick={handleBulkUpload}>Upload Products</Button>
+                            </DialogFooter>
                         </form>
                     </TabsContent>
                 </Tabs>
