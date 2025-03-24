@@ -11,6 +11,7 @@ interface ReviewContextType {
     loading: boolean;
     error: string | null;
     refetchReviews: () => Promise<void>;
+    updateReview: (reviewId: string, updates: {rating: number, review_text: string}) => Promise<void>;
     deleteReview: (reviewId: string) => Promise<void>;
 }
 
@@ -20,6 +21,7 @@ const ReviewContext = createContext<ReviewContextType>({
     loading: false,
     error: null,
     refetchReviews: async () => {},
+    updateReview: async () => {},
     deleteReview: async () => {}
 });
 
@@ -50,6 +52,26 @@ export const ReviewProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
     };
 
+    // Update review
+    const updateReview = async (reviewId: string, updates: {rating: number, review_text: string}) => {
+        try {
+            const res = await api.put(`/reviews/${reviewId}`, updates);
+            const updatedReview = res.data;
+
+            // Update review in state
+            setReviews((prevReviews) =>
+                prevReviews.map((review) =>
+                    review.review_id === reviewId ? updatedReview : review
+                )
+            );
+
+            toast.success("Review updated successfully!", {id: "update-review-toast"});
+        } catch (error: any) {
+            console.error("Update error:", error);
+            toast.error("Failed to update review. Please try again.");
+        }
+    };
+
     // Delete review
     const deleteReview = async (reviewId: string) => {
         try {
@@ -71,7 +93,7 @@ export const ReviewProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }, []);
 
     return (
-        <ReviewContext.Provider value={{ reviews, loading, error, refetchReviews: fetchReviews, deleteReview }}>
+        <ReviewContext.Provider value={{ reviews, loading, error, refetchReviews: fetchReviews, updateReview, deleteReview }}>
             {children}
         </ReviewContext.Provider>
     );
