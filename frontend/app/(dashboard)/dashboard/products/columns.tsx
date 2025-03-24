@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/types/products";
 import { formatDate } from "@/utils/formatters";
@@ -30,6 +32,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+
+import { EditProductForm } from "@/components/EditProductForm";
 
 import { useProducts } from "@/lib/ProductContext";
 
@@ -101,8 +105,10 @@ export const columns: ColumnDef<Product>[] = [
         cell: ({ row }) => {
             const product = row.original;
             const { deleteProduct } = useProducts();
+            const [editOpen, setEditOpen] = useState(false);
             
             return (
+                <>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -119,7 +125,7 @@ export const columns: ColumnDef<Product>[] = [
                             Copy Product ID
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setEditOpen(true); }}>
                             Edit
                         </DropdownMenuItem>
                         <AlertDialog>
@@ -143,7 +149,11 @@ export const columns: ColumnDef<Product>[] = [
                         </AlertDialog>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            )
+
+                {/* Edit dialog rendered outside the dropdown */}
+                <EditProductForm open={editOpen} setOpen={setEditOpen} product={product} />
+                </>
+            );
         }
     }
 ]
