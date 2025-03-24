@@ -10,6 +10,7 @@ interface ProductContextType {
     loading: boolean;
     error: string | null;
     refetchProducts: () => Promise<void>;
+    updateProduct: (productId: string, updates: {name: string, category: string, description: string}) => Promise<void>;
     deleteProduct: (productId: string) => Promise<void>;
 }
 
@@ -18,6 +19,7 @@ const ProductContext = createContext<ProductContextType>({
     loading: false,
     error: null,
     refetchProducts: async () => {},
+    updateProduct: async () => {},
     deleteProduct: async () => {},
 });
 
@@ -47,6 +49,27 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
       }
     };
 
+    // Update product
+    const updateProduct = async (product_id: string, updates: {name: string, category: string, description: string}) => {
+        try {
+          const res = await api.put(`/products/${product_id}`, updates);
+          const updatedProduct = res.data;
+
+          // Update product in state
+          setProducts((prevProducts) =>
+            prevProducts.map((product) =>
+              product.product_id === product_id ? updatedProduct : product
+            )
+          );
+
+          toast.success("Product updated successfully!", {id: "update-product-toast"});
+        } catch (error: any) {
+          console.error("Update error:", error);
+          toast.error("Failed to update product. Please try again.");
+        }
+    };
+    
+
     // Delete product
     const deleteProduct = async (product_id: string) => {
       try {
@@ -68,7 +91,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }, []);
   
     return (
-      <ProductContext.Provider value={{ products, loading, error, refetchProducts: fetchProducts, deleteProduct }}>
+      <ProductContext.Provider value={{ products, loading, error, refetchProducts: fetchProducts, updateProduct, deleteProduct }}>
         {children}
       </ProductContext.Provider>
     );
