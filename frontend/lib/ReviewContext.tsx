@@ -58,7 +58,7 @@ export const ReviewProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             // Remove deleted review from state
             setReviews((prevReviews) => prevReviews.filter((review) => review.review_id !== reviewId));
 
-            toast.success("Review deleted successfully!");
+            toast.success("Review deleted successfully!", {id: "delete-review-toast"});
         } catch (error: any) {
             console.error("Delete error:", error);
             toast.error("Failed to delete review. Please try again.");
