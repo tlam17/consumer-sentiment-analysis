@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button";
 
 import { Review } from "@/types/reviews";
+import { useReviews } from "@/lib/ReviewContext";
 
 interface EditReviewFormProps {
     review: Review;
@@ -34,7 +35,13 @@ export function EditReviewForm({ open, setOpen, review }: EditReviewFormProps) {
     const [rating, setRating] = useState(review.rating);
     const [reviewText, setReviewText] = useState(review.review_text);
 
-    const handleSubmit = async (e: React.FormEvent) => {};
+    const { updateReview } = useReviews();
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        await updateReview(review.review_id, { rating, review_text: reviewText });
+        setOpen(false);
+    };
         
     return (
         <Dialog open={open} onOpenChange={setOpen}>
