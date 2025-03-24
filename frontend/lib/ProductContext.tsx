@@ -55,7 +55,7 @@ export const ProductProvider: React.FC<{ children: React.ReactNode }> = ({ child
         // Remove deleted product from state
         setProducts((prevProducts) => prevProducts.filter((product) => product.product_id !== product_id));
 
-        toast.success("Product deleted successfully!");
+        toast.success("Product deleted successfully!", {id: "delete-product-toast"});
       } catch (error: any) {
         console.error("Delete error:", error);
         toast.error("Failed to delete product. Please try again.");
