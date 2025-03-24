@@ -42,15 +42,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AddReviewForm } from "@/components/AddReviewForm";
 
-interface DataTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[]
-    data: TData[]
+import { Trash } from "lucide-react";
+
+import { useReviews } from "@/lib/ReviewContext";
+import { Review } from "@/types/reviews";
+
+interface DataTableProps {
+    columns: ColumnDef<Review, any>[]
+    data: Review[]
 }
 
-export function DataTable<TData, TValue>({ 
+export function DataTable({ 
     columns,
     data,
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
@@ -72,6 +77,8 @@ export function DataTable<TData, TValue>({
             rowSelection
         }
     })
+
+    const { deleteReview } = useReviews();
 
     return (
         <div>
