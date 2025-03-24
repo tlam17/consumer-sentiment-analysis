@@ -38,21 +38,36 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
 import { AddProductForm } from "@/components/AddProductForm";
 
 import { Trash } from "lucide-react";
 
-interface DataTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[]
-    data: TData[]
+import { useProducts } from "@/lib/ProductContext";
+import { Product } from "@/types/products";
+
+interface DataTableProps {
+    columns: ColumnDef<Product, any>[]
+    data: Product[]
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable({
     columns,
     data,
-  }: DataTableProps<TData, TValue>) {
+  }: DataTableProps) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
@@ -75,6 +90,8 @@ export function DataTable<TData, TValue>({
         rowSelection,
       }
     })
+
+    const { deleteProduct } = useProducts();
    
     return (
       <div>
@@ -140,11 +157,38 @@ export function DataTable<TData, TValue>({
                   {table.getFilteredSelectedRowModel().rows.length} of{" "}
                   {table.getFilteredRowModel().rows.length} row(s) selected.
                 </span>
-                
+
                 {table.getFilteredSelectedRowModel().rows.length > 0 && (
-                  <Button size="sm" className="px-2">
-                      <Trash/>
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button size="sm" className="px-2">
+                        <Trash />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will permanently delete all selected products. This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => {
+                          const selectedRows = table.getFilteredSelectedRowModel().rows;
+                          const productIds = selectedRows.map((row) => row.original.product_id);
+
+                          productIds.forEach((id) => {
+                            deleteProduct(id);
+                          })
+
+                          table.resetRowSelection();
+                        }}>
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 )}
               </div>
             </div>
