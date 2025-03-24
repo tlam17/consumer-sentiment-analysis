@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { ColumnDef } from "@tanstack/react-table";
 import { Review } from "@/types/reviews";
 import { formatDate } from "@/utils/formatters";
@@ -32,6 +34,8 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { useReviews } from "@/lib/ReviewContext";
+
+import { EditReviewForm } from "@/components/EditReviewForm";
 
 export const columns: ColumnDef<Review>[] = [
     {
@@ -106,9 +110,11 @@ export const columns: ColumnDef<Review>[] = [
         cell: ({ row }) => {
             const review = row.original;
             const { deleteReview } = useReviews();
+            const [editOpen, setEditOpen] = useState(false);
             
             return (
-                <DropdownMenu>
+                <>
+                    <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="h-8 w-8 p-0">
                             <span className="sr-only">Open menu</span>
@@ -124,7 +130,7 @@ export const columns: ColumnDef<Review>[] = [
                             Copy Review ID
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setEditOpen(true); }}>
                             Edit
                         </DropdownMenuItem>
                         <AlertDialog>
@@ -148,6 +154,10 @@ export const columns: ColumnDef<Review>[] = [
                         </AlertDialog>
                     </DropdownMenuContent>
                 </DropdownMenu>
+
+                {/* Edit dialog rendered outside the dropdown */}
+                <EditReviewForm open={editOpen} setOpen={setEditOpen} review={review} />
+                </>
             )
         }
     }
