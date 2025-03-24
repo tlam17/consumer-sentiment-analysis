@@ -38,6 +38,18 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AddReviewForm } from "@/components/AddReviewForm";
@@ -139,8 +151,45 @@ export function DataTable({
           </div>
           <div className="flex items-center justify-end space-x-2 py-4">
             <div className="flex-1 text-sm text-muted-foreground">
-              {table.getFilteredSelectedRowModel().rows.length} of{" "}
-              {table.getFilteredRowModel().rows.length} row(s) selected.
+              <div className="flex items-center space-x-2">
+                <span>
+                  {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                  {table.getFilteredRowModel().rows.length} row(s) selected.
+                </span>
+
+                {table.getFilteredSelectedRowModel().rows.length > 0 && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button size="sm" className="px-2">
+                        <Trash />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This will permanently delete all selected reviews. This action cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => {
+                          const selectedRows = table.getFilteredSelectedRowModel().rows;
+                          const reviewIds = selectedRows.map((row) => row.original.review_id);
+
+                          reviewIds.forEach((id) => {
+                            deleteReview(id);
+                          })
+
+                          table.resetRowSelection();
+                        }}>
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+              </div>
             </div>
             <div className="flex items-center space-x-6 lg:space-x-8">
               <div className="flex items-center space-x-2">
