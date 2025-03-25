@@ -203,7 +203,7 @@ const updateReview = async (req, res) => {
         const { rating, review_text } = req.body;
         
         // Update review and return updated details
-        const query = `UPDATE reviews SET rating = $1, review_text = $2 WHERE review_id = $3 RETURNING *`;
+        const query = `UPDATE reviews SET rating = $1, review_text = $2, updated_at = NOW() WHERE review_id = $3 RETURNING *`;
         const result = await pool.query(query, [rating, review_text, reviewId]);
         
         // Return updated review

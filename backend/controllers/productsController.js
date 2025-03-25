@@ -255,7 +255,7 @@ const updateProduct = async (req, res) => {
         }
 
         // Update product with new details
-        const updateQuery = "UPDATE products SET name = $1, category_id = $2, description = $3 WHERE product_id = $4 RETURNING product_id, name, description, created_at, updated_at, (SELECT category_name FROM categories WHERE category_id = $2) AS category_name";
+        const updateQuery = "UPDATE products SET name = $1, category_id = $2, description = $3, updated_at = NOW() WHERE product_id = $4 RETURNING product_id, name, description, created_at, updated_at, (SELECT category_name FROM categories WHERE category_id = $2) AS category_name";
         const updateResult = await pool.query(updateQuery, [name, categoryId, description, productId]);
 
         // Commit the transaction
