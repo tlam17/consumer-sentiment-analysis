@@ -79,7 +79,8 @@ export const columns: ColumnDef<Review>[] = [
     },
     {
         accessorKey: "review_text",
-        header: "Review Text"
+        header: "Review Text",
+        cell: ({ row }) => row.original.review_text.length > 150 ? row.original.review_text.substring(0, 150) + "..." : row.original.review_text
     },
     {
         accessorKey: "created_at",
