@@ -71,7 +71,7 @@ export const columns: ColumnDef<Review>[] = [
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Rating
+                    <span className="text-muted-foreground text-xs uppercase tracking-wider bg-muted/40">Rating</span>
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
@@ -87,7 +87,7 @@ export const columns: ColumnDef<Review>[] = [
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Created At
+                    <span className="text-muted-foreground text-xs uppercase tracking-wider bg-muted/40">Created At</span>
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
@@ -99,7 +99,7 @@ export const columns: ColumnDef<Review>[] = [
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Updated At
+                    <span className="text-muted-foreground text-xs uppercase tracking-wider bg-muted/40">Updated At</span>
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
