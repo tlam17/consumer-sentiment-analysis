@@ -15,7 +15,6 @@ import {
   import { toast } from "sonner"
   import { useRouter } from "next/navigation";
   import { useUser } from "@/lib/UserContext";
-  import { ModeToggle } from "@/components/ModeToggle";
 
 // Menu items.
 const items = [
@@ -88,7 +87,6 @@ export function AppSidebar() {
                                 <LogOut/>
                                 <span>Log Out</span>
                             </SidebarMenuButton>
-                            <ModeToggle />
                         </div>
                     </SidebarMenuItem>
                 </SidebarMenu>
