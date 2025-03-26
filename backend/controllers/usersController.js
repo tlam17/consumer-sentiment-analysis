@@ -138,6 +138,12 @@ const deleteUser = async (req, res) => {
         const { userId } = req.params;
         
         // Delete user and return its details
+        const deleteReviewsQuery = "DELETE FROM reviews WHERE user_id = $1";
+        await pool.query(deleteReviewsQuery, [userId]);
+
+        const deleteProductsQuery = "DELETE FROM products WHERE user_id = $1";
+        await pool.query(deleteProductsQuery, [userId]);
+
         const query = "DELETE FROM users WHERE user_id = $1 RETURNING *";
         const result = await pool.query(query, [userId]);
         
