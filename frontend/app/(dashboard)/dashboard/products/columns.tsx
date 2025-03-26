@@ -61,20 +61,29 @@ export const columns: ColumnDef<Product>[] = [
     {
         accessorKey: "product_id",
         header: "Product ID",
+        cell: ({ row }) => (
+            <span className="text-sm text-muted-foreground">
+              {row.original.product_id}
+            </span>
+        )
     },
     {
         accessorKey: "name",
         header: "Name",
+        cell: ({ row }) => (
+            <span className="text-sm">
+              {row.original.name}
+            </span>
+        )
     },
     {
         accessorKey: "category",
         header: "Category",
-        cell: ({ row }) => row.original?.category_name || "No Category"
-    },
-    {
-        accessorKey: "description",
-        header: "Description",
-        cell: ({ row }) => row.original.description || "No Description"
+        cell: ({ row }) => (
+            <span className="text-sm italic text-muted-foreground">
+              {row.original.category_name || "No Category"}
+            </span>
+        )
     },
     {
         accessorKey: "created_at",
@@ -86,7 +95,11 @@ export const columns: ColumnDef<Product>[] = [
                 </Button>
             )
         },
-        cell: ({ row }) => formatDate(row.original.created_at)
+        cell: ({ row }) => (
+            <span className="text-xs text-muted-foreground">
+              {formatDate(row.original.created_at)}
+            </span>
+        )
     },
     {
         accessorKey: "updated_at",
@@ -98,7 +111,11 @@ export const columns: ColumnDef<Product>[] = [
                 </Button>
             )
         },
-        cell: ({ row }) => formatDate(row.original.updated_at)
+        cell: ({ row }) => (
+            <span className="text-xs text-muted-foreground">
+              {formatDate(row.original.updated_at)}
+            </span>
+        )
     },
     {
         id: "actions",

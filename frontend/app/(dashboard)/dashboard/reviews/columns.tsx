@@ -60,27 +60,46 @@ export const columns: ColumnDef<Review>[] = [
     },
     {
         accessorKey: "review_id",
-        header: "Review ID"
+        header: "Review ID",
+        cell: ({ row }) => (
+            <span className="text-sm text-muted-foreground">
+              {row.original.review_id}
+            </span>
+        )
     },
     {
         accessorKey: "product_id",
-        header: "Product ID"
+        header: "Product ID",
+        cell: ({ row }) => (
+            <span className="text-sm text-muted-foreground">
+              {row.original.product_id}
+            </span>
+        )
     },
     {
         accessorKey: "rating",
         header: ({ column }) => {
             return (
                 <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    <span className="text-muted-foreground text-xs uppercase tracking-wider bg-muted/40">Rating</span>
+                    <span className="text-xs uppercase tracking-wider bg-muted/40">Rating</span>
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
-        }
+        },
+        cell: ({ row }) => (
+            <span className="text-sm">
+              {row.original.rating}
+            </span>
+        )
     },
     {
         accessorKey: "review_text",
         header: "Review Text",
-        cell: ({ row }) => row.original.review_text.length > 150 ? row.original.review_text.substring(0, 150) + "..." : row.original.review_text
+        cell: ({ row }) => (
+            <span className="text-sm line-clamp-2">
+              {row.original.review_text}
+            </span>
+        )
     },
     {
         accessorKey: "created_at",
@@ -92,7 +111,11 @@ export const columns: ColumnDef<Review>[] = [
                 </Button>
             )
         },
-        cell: ({ row }) => formatDate(row.original.created_at)
+        cell: ({ row }) => (
+            <span className="text-xs text-muted-foreground">
+              {formatDate(row.original.created_at)}
+            </span>
+        )
     },
     {
         accessorKey: "updated_at",
@@ -104,7 +127,11 @@ export const columns: ColumnDef<Review>[] = [
                 </Button>
             )
         },
-        cell: ({ row }) => formatDate(row.original.updated_at)
+        cell: ({ row }) => (
+            <span className="text-xs text-muted-foreground">
+              {formatDate(row.original.updated_at)}
+            </span>
+        )
     },
     {
         id: "actions",
