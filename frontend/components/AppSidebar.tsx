@@ -57,40 +57,47 @@ export function AppSidebar() {
     }
 
     return (
-        <Sidebar>
-            <SidebarHeader>
-                <h1>Dashboard</h1>
+        <Sidebar className="bg-sidebar-background text-sidebar-foreground border-r border-sidebar-border min-h-screen shadow-sm">
+            <SidebarHeader className="px-4 py-5 border-b border-sidebar-border">
+                <h1 className="text-lg font-semibold tracking-tight">Dashboard</h1>
             </SidebarHeader>
-            <SidebarContent>
+
+            <SidebarContent className="px-2 py-4 space-y-2">
                 <SidebarGroup>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            {items.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
-                                        <a href={item.url}>
-                                            <item.icon/>
-                                            <span>{item.title}</span>
-                                        </a>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
+                <SidebarGroupContent>
+                    <SidebarMenu className="space-y-1">
+                    {items.map((item) => (
+                        <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                            asChild
+                            className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+                        >
+                            <a href={item.url} className="flex items-center gap-3 w-full">
+                            <item.icon className="w-5 h-5" />
+                            <span className="text-medium">{item.title}</span>
+                            </a>
+                        </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    ))}
+                    </SidebarMenu>
+                </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
-            <SidebarFooter>
+
+            <SidebarFooter className="mt-auto px-4 py-3 border-t border-sidebar-border">
                 <SidebarMenu>
-                    <SidebarMenuItem>
-                        <div className="flex items-center gap-2">
-                            <SidebarMenuButton onClick={handleLogout}>
-                                <LogOut/>
-                                <span>Log Out</span>
-                            </SidebarMenuButton>
-                        </div>
-                    </SidebarMenuItem>
+                <SidebarMenuItem>
+                    <SidebarMenuButton
+                    onClick={handleLogout}
+                    className="flex items-center gap-2 w-full text-sm font-medium px-3 py-2 rounded-md hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                    >
+                    <LogOut className="w-5 h-5" />
+                    <span>Log Out</span>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>
         </Sidebar>
+
     );
 }
