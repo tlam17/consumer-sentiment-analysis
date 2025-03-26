@@ -113,7 +113,7 @@ export function DataTable({
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => {
                       return (
-                        <TableHead key={header.id}>
+                        <TableHead key={header.id} className="text-muted-foreground text-xs uppercase tracking-wider bg-muted/40">
                           {header.isPlaceholder
                             ? null
                             : flexRender(
@@ -132,6 +132,7 @@ export function DataTable({
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
+                      className="even:bg-muted/30 hover:bg-accent/20 transition-colors"
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id}>
