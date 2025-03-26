@@ -15,6 +15,7 @@ import {
   import { toast } from "sonner"
   import { useRouter } from "next/navigation";
   import { useUser } from "@/lib/UserContext";
+  import { ModeToggle } from "@/components/ModeToggle";
 
 // Menu items.
 const items = [
@@ -82,10 +83,13 @@ export function AppSidebar() {
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton onClick={handleLogout}>
-                            <LogOut/>
-                            <span>Log Out</span>
-                        </SidebarMenuButton>
+                        <div className="flex items-center gap-2">
+                            <SidebarMenuButton onClick={handleLogout}>
+                                <LogOut/>
+                                <span>Log Out</span>
+                            </SidebarMenuButton>
+                            <ModeToggle />
+                        </div>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>
