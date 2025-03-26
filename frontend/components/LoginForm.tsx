@@ -1,7 +1,7 @@
 "use client";
 
 import api from "@/utils/api";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,14 @@ export function LoginForm() {
     const [password, setPassword] = useState("");
     const router = useRouter();
     const { setUser } = useUser();
+
+    useEffect(() => {
+        const showUpdateSuccess = localStorage.getItem("showUpdateSuccess");
+        if (showUpdateSuccess === "true") {
+            toast.success("Your details have been updated successfully! Please log in again.");
+            localStorage.removeItem("showUpdateSuccess");
+        }
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
