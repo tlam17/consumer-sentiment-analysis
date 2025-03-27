@@ -11,11 +11,17 @@ export interface User {
 interface UserContextType {
     user: User | null;
     setUser: (user: User | null) => void;
+    loading: boolean;
+    authError: boolean;
+    setAuthError: (value: boolean) => void;
 }
 
 export const UserContext = createContext<UserContextType>({
     user: null,
     setUser: () => {},
+    loading: true,
+    authError: false,
+    setAuthError: () => {},
 });
 
 export const useUser = () => useContext(UserContext);
@@ -23,6 +29,7 @@ export const useUser = () => useContext(UserContext);
 export function UserProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [authError, setAuthError] = useState(false);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -50,7 +57,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, setUser }}>
+        <UserContext.Provider value={{ user, setUser, loading, authError, setAuthError }}>
             {!loading && children}
         </UserContext.Provider>
     );

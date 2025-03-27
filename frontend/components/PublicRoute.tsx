@@ -1,19 +1,19 @@
 "use client";
 
-import { useUser } from "@/lib/UserContext";
+import { useUser} from "@/lib/UserContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function PublicRoute({ children }: { children: React.ReactNode}) {
-    const { user } = useUser();
+    const { user, loading, authError } = useUser();
     const router = useRouter();
 
     useEffect(() => {
         // If user is already authenticated, redirect to dashboard
-        if (user) {
+        if (!loading && user && !authError) {
             router.push("/dashboard");
         }
-    }, [user, router]);
+    }, [user, loading, authError, router]);
 
     // If not authenticated, render the public content
   if (user) {

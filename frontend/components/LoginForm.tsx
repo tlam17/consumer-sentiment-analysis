@@ -14,7 +14,7 @@ export function LoginForm() {
     const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
-    const { setUser } = useUser();
+    const { setUser, setAuthError } = useUser();
 
     useEffect(() => {
         const showUpdateSuccess = localStorage.getItem("showUpdateSuccess");
@@ -42,7 +42,9 @@ export function LoginForm() {
 
             router.push(redirectPath);
             toast.success("Login successful!");
+            setAuthError(false);
         } catch (error: any) {
+            setAuthError(true);
             toast.error("Invalid credentials", {description: "Please check your email/username and password"});
         }
     }
