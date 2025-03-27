@@ -57,7 +57,7 @@ export function AppSidebar() {
     }
 
     return (
-        <Sidebar className="bg-sidebar-background text-sidebar-foreground border-r border-sidebar-border min-h-screen shadow-sm">
+        <Sidebar className="sidebar-gradient text-sidebar-foreground border-r border-sidebar-border min-h-screen shadow-sm">
             <SidebarHeader className="px-4 py-5 border-b border-sidebar-border">
                 <h1 className="text-lg font-semibold tracking-tight">Dashboard</h1>
             </SidebarHeader>

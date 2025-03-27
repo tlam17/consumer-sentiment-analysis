@@ -45,7 +45,8 @@ export function LoginForm() {
             setAuthError(false);
         } catch (error: any) {
             setAuthError(true);
-            toast.error("Invalid credentials", {description: "Please check your email/username and password"});
+            toast.error("Invalid credentials", {description: "Please check your email/username and password", duration: 10000, id: "login-error"});
+            return false;
         }
     }
 
