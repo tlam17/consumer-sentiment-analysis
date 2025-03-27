@@ -80,10 +80,12 @@ export const columns: ColumnDef<Review>[] = [
         accessorKey: "rating",
         header: ({ column }) => {
             return (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    <span className="text-xs uppercase tracking-wider bg-muted/40">Rating</span>
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
+                <div className="hover:text-foreground">
+                    <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                        <span className="text-xs uppercase tracking-wider">Rating</span>
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                </div>
             )
         },
         cell: ({ row }) => (
@@ -105,10 +107,12 @@ export const columns: ColumnDef<Review>[] = [
         accessorKey: "created_at",
         header: ({ column }) => {
             return (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    <span className="text-muted-foreground text-xs uppercase tracking-wider bg-muted/40">Created At</span>
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
+                <div className="hover:text-foreground">
+                    <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                        <span className="text-xs uppercase tracking-wider">Created At</span>
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                </div>
             )
         },
         cell: ({ row }) => (
@@ -121,10 +125,12 @@ export const columns: ColumnDef<Review>[] = [
         accessorKey: "updated_at",
         header: ({ column }) => {
             return (
-                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    <span className="text-muted-foreground text-xs uppercase tracking-wider bg-muted/40">Updated At</span>
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
-                </Button>
+                <div className="hover:text-foreground">
+                    <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                        <span className="text-xs uppercase tracking-wider">Updated At</span>
+                        <ArrowUpDown className="ml-2 h-4 w-4" />
+                    </Button>
+                </div>
             )
         },
         cell: ({ row }) => (
