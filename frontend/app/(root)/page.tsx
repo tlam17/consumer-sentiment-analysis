@@ -38,7 +38,7 @@ export default function Home() {
         </header>
 
         {/* Hero */}
-        <section className="hero-gradient text-foreground py-24 px-6">
+        <section className="animated-hero-gradient text-foreground py-24 px-6">
             <div className="mx-auto max-w-4xl text-center">
             <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">
                 Consumer Sentiment Analysis Dashboard
