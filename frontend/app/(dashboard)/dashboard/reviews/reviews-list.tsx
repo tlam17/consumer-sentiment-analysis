@@ -11,7 +11,7 @@ export default function ReviewsList() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-48">
+            <div className="flex items-center justify-center h-screen">
                 <Spinner className="text-foreground" size="large" />
             </div>
         );
