@@ -4,11 +4,17 @@ import { useProducts } from "@/lib/ProductContext";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 
+import { Spinner } from "@/components/ui/spinner";
+
 export default function ProductList() {
   const { products, loading, error } = useProducts();
 
   if (loading) {
-    return <div className="flex items-center justify-center h-48">Loading products...</div>;
+    return (
+      <div className="flex items-center justify-center h-48">
+        <Spinner className="text-foreground" size="large" />
+      </div>
+    );
   }
 
   if (error) {
