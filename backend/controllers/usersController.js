@@ -163,13 +163,13 @@ const deleteUser = async (req, res) => {
  * @param {Object} res - Express response object
  * @returns {Object} User credentials or error message
  */
-const getUserCredentials = async (req, res) => {
+const findUser = async (req, res) => {
     try {
         // Extract identifier from route parameters
         const { identifier } = req.params;
         
         // Fetch user by email or username
-        const query = "SELECT user_id, username, email, password_hash FROM users WHERE email = $1 OR username = $1";
+        const query = "SELECT user_id FROM users WHERE email = $1 OR username = $1";
         const result = await pool.query(query, [identifier]);
         
         // Check if user exists
@@ -191,5 +191,5 @@ module.exports = {
     loginUser,
     updateUser,
     deleteUser,
-    getUserCredentials
+    findUser
 };
