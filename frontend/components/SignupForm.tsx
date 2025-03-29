@@ -35,16 +35,35 @@ export function SignupForm() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!email || !username || !password) {
-            toast.error("Please fill out all fields.");
-            return;
+        try {
+            const resEmailCheck = await api.get(`/users/emails/${email}`);
+            if (resEmailCheck.status === 200) {
+                toast.error("There is already an account associated with this email.");
+                return;
+            }
+        } catch (error: any) {
+            if (error.response?.status !== 404) {
+                toast.error("Something went wrong. Please try again.");
+                return;
+            }
+            // 404 means email is available — continue
         }
 
         try {
-            setShowDialog(true);
+            const resUsernameCheck = await api.get(`/users/usernames/${username}`);
+            if (resUsernameCheck.status === 200) {
+                toast.error("There is already an account associated with this username.");
+                return;
+            }
         } catch (error: any) {
-            toast.error("Something went wrong. Please try again.");
+            if (error.response?.status !== 404) {
+                toast.error("Something went wrong. Please try again.");
+                return;
+            }
+            // 404 means username is available — continue
         }
+
+        setShowDialog(true);
     }
 
     return (
