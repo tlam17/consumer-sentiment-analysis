@@ -3,6 +3,22 @@
 import api from "@/utils/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSlot,
+} from "@/components/ui/input-otp";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,21 +29,26 @@ export function SignupForm() {
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [showDialog, setShowDialog] = useState(false);
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!email || !username || !password) {
+            toast.error("Please fill out all fields.");
+            return;
+        }
+
         try {
-            const signupData = await api.post("/users/signup", { email, username, password });
-            router.push("/login");
-            toast.success("Success!", {description: "You can now login with your new credentials!"});
+            setShowDialog(true);
         } catch (error: any) {
             toast.error("Something went wrong. Please try again.");
         }
     }
 
     return (
+        <>
         <Card>
             <CardHeader>
                 <CardTitle>Sign Up</CardTitle>
@@ -56,5 +77,43 @@ export function SignupForm() {
                 <p className="text-sm">Already have an account? <a className="underline" href="/login">Login</a></p>
             </CardFooter>
         </Card>
+
+        <Dialog open={showDialog} onOpenChange={setShowDialog}>
+            <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                <DialogTitle className="text-xl">Email Verification</DialogTitle>
+                <DialogDescription className="text-sm text-muted-foreground">
+                    We've sent a 6-digit verification code to your email. Enter it below to verify your account.
+                </DialogDescription>
+                </DialogHeader>
+
+                <div className="flex flex-col gap-4 py-4">
+                <div className="mx-auto">
+                    <InputOTP maxLength={6}>
+                    <InputOTPGroup>
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                        <InputOTPSlot index={3} />
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                    </InputOTP>
+                </div>
+
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                    <span>Didn't get the code?</span>
+                    <button type="button" className="text-primary underline hover:opacity-80 transition">
+                    Resend
+                    </button>
+                </div>
+                </div>
+
+                <DialogFooter>
+                <Button className="w-full">Verify & Continue</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+        </>
     )
 }
