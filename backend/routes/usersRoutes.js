@@ -11,7 +11,9 @@ router.post("/login", usersController.loginUser);
 router.put("/:userId", authMiddleware.authenticateToken, usersController.updateUser);
 // Delete a user
 router.delete("/:userId", authMiddleware.authenticateToken, usersController.deleteUser);
-// Find user by email or username
-router.get("/:identifier", usersController.findUser);
+// Find user by email
+router.get("/emails/:email", usersController.findUserByEmail);
+// Find user by username
+router.get("/usernames/:username", usersController.findUserByUsername);
 
 module.exports = router;

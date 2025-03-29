@@ -157,20 +157,50 @@ const deleteUser = async (req, res) => {
 };
 
 /**
- * Fetch user credentials by their email or username
+ * Fetch user credentials by their email
  * 
  * @param {Object} req - Express request object
  * @param {Object} res - Express response object
  * @returns {Object} User credentials or error message
  */
-const findUser = async (req, res) => {
+const findUserByEmail = async (req, res) => {
     try {
         // Extract identifier from route parameters
-        const { identifier } = req.params;
+        const { email } = req.params;
         
-        // Fetch user by email or username
-        const query = "SELECT user_id FROM users WHERE email = $1 OR username = $1";
-        const result = await pool.query(query, [identifier]);
+        // Fetch user by email
+        const query = "SELECT user_id FROM users WHERE email = $1";
+        const result = await pool.query(query, [email]);
+        
+        // Check if user exists
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        
+        // Return user credentials
+        res.status(200).json(result.rows[0]);
+    } catch (error) {
+        // Log and return error if fetching user fails
+        console.log(error);
+        res.status(500).json({ message: "Error getting user credentials" });
+    }
+};
+
+/**
+ * Fetch user credentials by their username
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Object} User credentials or error message
+ */
+const findUserByUsername = async (req, res) => {
+    try {
+        // Extract identifier from route parameters
+        const { username } = req.params;
+        
+        // Fetch user by username
+        const query = "SELECT user_id FROM users WHERE username = $1";
+        const result = await pool.query(query, [username]);
         
         // Check if user exists
         if (result.rows.length === 0) {
@@ -191,5 +221,6 @@ module.exports = {
     loginUser,
     updateUser,
     deleteUser,
-    findUser
+    findUserByEmail,
+    findUserByUsername
 };
