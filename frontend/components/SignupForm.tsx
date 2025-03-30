@@ -10,8 +10,7 @@ import {
     DialogDescription,
     DialogFooter,
     DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+    DialogTitle
 } from "@/components/ui/dialog";
 
 import {
@@ -30,6 +29,8 @@ export function SignupForm() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [showDialog, setShowDialog] = useState(false);
+    const [code, setCode] = useState("");
+    const [userInputCode, setUserInputCode] = useState("");
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -64,7 +65,60 @@ export function SignupForm() {
         }
 
         setShowDialog(true);
-    }
+
+        // Generate a new 6-digit code and send it to the user's email
+        const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+        setCode(newCode);
+        try {
+            await api.post("/send-verification/send", {
+                email,
+                code: newCode
+            });
+        } catch (error: any) {
+            toast.error("Something went wrong. Please try again.");
+            return;
+        }
+    };
+
+    // Handle verification
+    const handleVerify = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (userInputCode !== code) {
+            toast.error("Incorrect verification code.");
+            return;
+        }
+
+        try {
+            await api.post("/users/signup", {
+                email,
+                username,
+                password
+            });
+            toast.success("Account created successfully! Please log in with your new account.");
+            setShowDialog(false);
+            router.push("/login");
+        } catch (error: any) {
+            toast.error("Something went wrong. Please try again.");
+            return;
+        }
+    };
+
+    // Resend verification code
+    const handleResend = async () => {
+        const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+        setCode(newCode);
+        try {
+            await api.post("/send-verification/send", {
+                email,
+                code: newCode
+            });
+            toast.success("Verification code sent successfully.");
+        } catch (error: any) {
+            toast.error("Something went wrong. Please try again.");
+            return;
+        }
+    };
 
     return (
         <>
@@ -105,32 +159,33 @@ export function SignupForm() {
                     We've sent a 6-digit verification code to your email. Enter it below to verify your account.
                 </DialogDescription>
                 </DialogHeader>
+                <form onSubmit={handleVerify}>
+                    <div className="flex flex-col gap-4 py-4">
+                    <div className="mx-auto">
+                        <InputOTP maxLength={6} value={userInputCode} onChange={setUserInputCode}>
+                        <InputOTPGroup>
+                            <InputOTPSlot index={0} />
+                            <InputOTPSlot index={1} />
+                            <InputOTPSlot index={2} />
+                            <InputOTPSlot index={3} />
+                            <InputOTPSlot index={4} />
+                            <InputOTPSlot index={5} />
+                        </InputOTPGroup>
+                        </InputOTP>
+                    </div>
 
-                <div className="flex flex-col gap-4 py-4">
-                <div className="mx-auto">
-                    <InputOTP maxLength={6}>
-                    <InputOTPGroup>
-                        <InputOTPSlot index={0} />
-                        <InputOTPSlot index={1} />
-                        <InputOTPSlot index={2} />
-                        <InputOTPSlot index={3} />
-                        <InputOTPSlot index={4} />
-                        <InputOTPSlot index={5} />
-                    </InputOTPGroup>
-                    </InputOTP>
-                </div>
+                    <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <span>Didn't get the code?</span>
+                        <button onClick={handleResend} type="button" className="text-primary underline hover:opacity-80 transition">
+                        Resend
+                        </button>
+                    </div>
+                    </div>
 
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>Didn't get the code?</span>
-                    <button type="button" className="text-primary underline hover:opacity-80 transition">
-                    Resend
-                    </button>
-                </div>
-                </div>
-
-                <DialogFooter>
-                <Button className="w-full">Verify & Continue</Button>
-                </DialogFooter>
+                    <DialogFooter>
+                    <Button type="submit" className="w-full">Verify & Continue</Button>
+                    </DialogFooter>
+                </form>
             </DialogContent>
         </Dialog>
         </>
