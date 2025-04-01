@@ -10,9 +10,12 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner"
 import { useUser } from "@/lib/UserContext";
 
+import { Eye, EyeOff } from "lucide-react";
+
 export function LoginForm() {
     const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
     const { setUser, setAuthError } = useUser();
 
@@ -64,11 +67,29 @@ export function LoginForm() {
                             <Input id="identifier" type="text" placeholder="johndoe@example.com" value={identifier} onChange={(e) => setIdentifier(e.target.value)} required />
                         </div>
                         <div className="grid gap-2">
+                            <div className="grid gap-2">
+                            <div className="grid gap-2 relative">
                             <div className="flex items-center">
                                 <Label htmlFor="password">Password</Label>
                                 <a className="hover:underline inline-block ml-auto text-sm" href="/reset">Forgot password?</a>
                             </div>
-                            <Input id="password" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                                <Input
+                                    id="password"
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(prev => !prev)}
+                                    className="absolute right-3 top-9 text-muted-foreground hover:text-foreground"
+                                    tabIndex={-1}
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
+                            </div>
                         </div>
                         <Button type="submit" className="w-full">Login</Button>
                     </div>

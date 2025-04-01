@@ -24,9 +24,13 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner"
 
+import { Eye, EyeOff } from "lucide-react";
+
+
 export function SignupForm() {
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const [password, setPassword] = useState("");
     const [showDialog, setShowDialog] = useState(false);
     const [code, setCode] = useState("");
@@ -139,8 +143,24 @@ export function SignupForm() {
                             <Input id="username" type="text" placeholder="johndoe" value={username} onChange={(e) => setUsername(e.target.value)} required/>
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required/>
+                            <div className="grid gap-2 relative">
+                                <Label htmlFor="password">Password</Label>
+                                <Input
+                                    id="password"
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(prev => !prev)}
+                                    className="absolute right-3 top-8 text-muted-foreground hover:text-foreground"
+                                    tabIndex={-1}
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
                         </div>
                         <Button type="submit" className="w-full">Sign Up</Button>
                     </div>
