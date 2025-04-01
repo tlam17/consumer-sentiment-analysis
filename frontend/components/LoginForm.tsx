@@ -66,7 +66,7 @@ export function LoginForm() {
                         <div className="grid gap-2">
                             <div className="flex items-center">
                                 <Label htmlFor="password">Password</Label>
-                                <a className="hover:underline inline-block ml-auto text-sm" href="/resetpassword">Forgot password?</a>
+                                <a className="hover:underline inline-block ml-auto text-sm" href="/reset">Forgot password?</a>
                             </div>
                             <Input id="password" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                         </div>

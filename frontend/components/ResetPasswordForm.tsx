@@ -25,8 +25,7 @@ import {
     CardContent,
     CardDescription,
     CardHeader,
-    CardTitle,
-    CardFooter,
+    CardTitle
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -48,7 +47,10 @@ export default function ResetPasswordForm() {
 
         // Verify that the email exists in the database
         try {
-            await api.get(`/users/emails/${email}`);
+            const res = await api.get(`/users/emails/${email}`);
+            
+            localStorage.setItem("resetUserId", res.data.user_id);
+            console.log(localStorage.getItem("resetUserId"));
             
             setShowDialog(true);
             // Generate a 6-digit code
@@ -83,7 +85,7 @@ export default function ResetPasswordForm() {
         toast.success("Code verified successfully!");
         setShowDialog(false);
 
-        router.push("/reset-password/new");
+        router.push("/reset/new");
     };
 
     // Resend verification code

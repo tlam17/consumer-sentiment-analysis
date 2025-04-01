@@ -126,6 +126,35 @@ const updateUser = async (req, res) => {
 };
 
 /**
+ * Update user password
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Object} Updated user details or error message
+ */
+const updateUserPassword = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        // Destructure new password from request body
+        const { password } = req.body;
+        
+        // Hash new password for secure storage
+        const hashedPassword = await argon2.hash(password);
+        
+        // Update user password in database
+        const query = "UPDATE users SET password_hash = $1 WHERE user_id = $2 RETURNING *";
+        const result = await pool.query(query, [hashedPassword, userId]);
+        
+        // Return updated user
+        res.status(200).json(result.rows[0]);
+    } catch (error) {
+        // Log and return error if updating password fails
+        console.log(error);
+        res.status(500).json({ message: "Error updating password" });
+    }
+};
+
+/**
  * Delete a user by their ID
  * 
  * @param {Object} req - Express request object
@@ -220,6 +249,7 @@ module.exports = {
     registerUser,
     loginUser,
     updateUser,
+    updateUserPassword,
     deleteUser,
     findUserByEmail,
     findUserByUsername

@@ -15,5 +15,7 @@ router.delete("/:userId", authMiddleware.authenticateToken, usersController.dele
 router.get("/emails/:email", usersController.findUserByEmail);
 // Find user by username
 router.get("/usernames/:username", usersController.findUserByUsername);
+// Update user password
+router.put("/password/:userId", usersController.updateUserPassword);
 
 module.exports = router;
