@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Consumer Sentiment Analysis Dashboard",
+  title: "InsightBoard - Consumer Sentiment Analysis",
   description: "Analyze consumer sentiment and reviews",
 };
 
