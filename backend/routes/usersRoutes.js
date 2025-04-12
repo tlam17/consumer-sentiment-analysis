@@ -17,5 +17,7 @@ router.get("/emails/:email", usersController.findUserByEmail);
 router.get("/usernames/:username", usersController.findUserByUsername);
 // Update user password
 router.put("/password/:userId", usersController.updateUserPassword);
+// Find user by id
+router.get("/:userId", usersController.findUserByID);
 
 module.exports = router;

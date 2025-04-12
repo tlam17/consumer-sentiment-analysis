@@ -186,6 +186,25 @@ const deleteUser = async (req, res) => {
 };
 
 /**
+ * Fetch user credentials by their id
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Object} User credentials or error message
+ */
+const findUserByID = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const query = "SELECT * FROM users WHERE user_id = $1";
+        const result = await pool.query(query, [userId]);
+        res.status(200).json(result.rows[0]);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error fetching user" });
+    }
+}
+
+/**
  * Fetch user credentials by their email
  * 
  * @param {Object} req - Express request object
@@ -252,5 +271,6 @@ module.exports = {
     updateUserPassword,
     deleteUser,
     findUserByEmail,
-    findUserByUsername
+    findUserByUsername,
+    findUserByID
 };
