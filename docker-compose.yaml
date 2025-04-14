@@ -14,6 +14,19 @@ services:
     networks:
       - postgres-network
 
+  analytics:
+    container_name: csad-analytics
+    build:
+      context: ./analytics
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - postgres-network
+
   database:
     container_name: csad-database
     image: postgres
