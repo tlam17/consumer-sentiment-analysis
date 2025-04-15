@@ -3,6 +3,9 @@ const csv = require("fast-csv");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
+const pLimit = require('p-limit');
+const limit = pLimit(10);   
+const { analyzeSentiment } = require("../services/analyticsService");
 
 const upload = multer({ dest: "uploads/" });
 
@@ -19,9 +22,16 @@ const createReview = async (req, res) => {
         const {product_id, rating, review_text} = req.body;
         const user_id = req.userId;
 
+        // Analyze sentiment of review
+        const { success, data } = await analyzeSentiment(review_text);
+        if (!success) {
+            return res.status(500).json({ message: "Error analyzing sentiment" });
+        }
+        const sentiment_score = data.sentiment_score;
+
         // Insert new review and return its details
-        const query = "INSERT INTO reviews (product_id, user_id, rating, review_text) VALUES ($1, $2, $3, $4) RETURNING *";
-        const result = await pool.query(query, [product_id, user_id, rating, review_text]);
+        const query = "INSERT INTO reviews (product_id, user_id, rating, review_text, sentiment_score) VALUES ($1, $2, $3, $4, $5) RETURNING *";
+        const result = await pool.query(query, [product_id, user_id, rating, review_text, sentiment_score]);
         
         // Return created review
         res.status(201).json(result.rows[0]);
@@ -60,20 +70,50 @@ const uploadReviews = async (req, res) => {
         })
         .on("end", async () => { 
             try {
-                // Check if any reviews were processed
                 if (reviews.length === 0) {
                     return res.status(400).json({ message: "CSV file is empty or incorrectly formatted" });
                 }
-                // Insert new reviews and return their details
-                const query = "INSERT INTO reviews (product_id, user_id, rating, review_text) VALUES ($1, $2, $3, $4) RETURNING *";
-                const results = Promise.all(reviews.map(review => pool.query(query, [review.product_id, user_id, review.rating, review.review_text])));
-                
-                // Delete uploaded CSV file
+        
+                const query = `INSERT INTO reviews 
+                               (product_id, user_id, rating, review_text, sentiment_score) 
+                               VALUES ($1, $2, $3, $4, $5) RETURNING *`;
+        
+                const results = [];
+                const failed = [];
+        
+                await Promise.all(reviews.map((review) =>
+                    limit(async () => {
+                        const { success, data } = await analyzeSentiment(review.review_text);
+                        if (!success) {
+                            failed.push({ review, reason: "Sentiment analysis failed" });
+                            return;
+                        }
+        
+                        try {
+                            const sentiment_score = data.sentiment_score;
+                            const result = await pool.query(query, [
+                                review.product_id,
+                                user_id,
+                                review.rating,
+                                review.review_text,
+                                sentiment_score
+                            ]);
+                            results.push(result.rows[0]);
+                        } catch (err) {
+                            failed.push({ review, reason: "Database insert failed", error: err.message });
+                        }
+                    })
+                ));
+        
                 fs.unlinkSync(filePath);
-
-                res.status(201).json(results);
+        
+                res.status(201).json({
+                    success_count: results.length,
+                    failure_count: failed.length,
+                    inserted: results,
+                    failed
+                });
             } catch (error) {
-                // Log and return error if review creation fails
                 console.log(error);
                 res.status(500).json({ message: "Error inserting reviews" });
             }
