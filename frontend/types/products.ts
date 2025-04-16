@@ -8,4 +8,6 @@ export interface Product {
     created_at: string;
     updated_at: string;
     category_name: string | null;
+    total_reviews: number;
+    average_rating: number;
 }

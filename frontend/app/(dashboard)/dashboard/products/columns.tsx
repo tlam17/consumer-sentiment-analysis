@@ -4,7 +4,6 @@ import { useState } from "react";
 
 import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/types/products";
-import { formatDate } from "@/utils/formatters";
 import { MoreHorizontal } from "lucide-react";
 import { ArrowUpDown } from "lucide-react"
 
@@ -86,39 +85,43 @@ export const columns: ColumnDef<Product>[] = [
         )
     },
     {
-        accessorKey: "created_at",
+        accessorKey: "total_reviews",
         header: ({ column }) => {
             return (
-                <div className="hover:text-foreground">
+                <div className="flex justify-center hover:text-foreground">
                     <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                        <span className="text-xs uppercase tracking-wider">Created At</span>
+                        <span className="text-xs uppercase tracking-wider">Total Reviews</span>
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 </div>
             )
         },
         cell: ({ row }) => (
-            <span className="text-xs text-muted-foreground">
-              {formatDate(row.original.created_at)}
-            </span>
+            <div className="w-full text-center">
+                <span className="text-sm text-muted-foreground">
+                    {row.original.total_reviews}
+                </span>
+            </div>
         )
     },
     {
-        accessorKey: "updated_at",
+        accessorKey: "average_rating",
         header: ({ column }) => {
             return (
-                <div className="hover:text-foreground">
+                <div className="flex justify-center hover:text-foreground">
                     <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                        <span className="text-xs uppercase tracking-wider">Updated At</span>
+                        <span className="text-xs uppercase tracking-wider">Average Rating</span>
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 </div>
             )
         },
         cell: ({ row }) => (
-            <span className="text-xs text-muted-foreground">
-              {formatDate(row.original.updated_at)}
-            </span>
+            <div className="w-full text-center">
+                <span className="text-sm text-muted-foreground">
+                    {row.original.average_rating ?? "N/A"}
+                </span>
+            </div>
         )
     },
     {
