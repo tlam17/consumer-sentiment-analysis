@@ -173,12 +173,23 @@ const getAllProducts = async (req, res) => {
         const user_id = req.userId;
 
         // Join products with categories to get category name
-        const query = `SELECT p.product_id, p.name, p.description, p.created_at, p.updated_at, c.category_name
-                       FROM products p
-                       LEFT JOIN categories c ON p.category_id = c.category_id
-                       WHERE p.user_id = $1
-                       ORDER BY p.name ASC`;
-        
+        const query = `
+        SELECT 
+            p.product_id, 
+            p.name, 
+            p.description, 
+            p.created_at, 
+            p.updated_at, 
+            c.category_name,
+            COUNT(r.review_id) AS total_reviews,
+            ROUND(AVG(r.rating)::numeric, 2) AS average_rating
+        FROM products p
+        LEFT JOIN categories c ON p.category_id = c.category_id
+        LEFT JOIN reviews r ON p.product_id = r.product_id
+        WHERE p.user_id = $1
+        GROUP BY p.product_id, p.name, p.description, p.created_at, p.updated_at, c.category_name
+        ORDER BY p.name ASC`;
+
         // Execute query and return results
         const result = await pool.query(query, [user_id]);
         res.json(result.rows);
@@ -308,5 +319,5 @@ module.exports = {
     getAllProducts,
     getProductById,
     updateProduct,
-    deleteProduct
+    deleteProduct,
 };
