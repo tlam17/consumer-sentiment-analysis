@@ -59,15 +59,6 @@ export const columns: ColumnDef<Review>[] = [
         ),
     },
     {
-        accessorKey: "review_id",
-        header: "Review ID",
-        cell: ({ row }) => (
-            <span className="text-sm text-muted-foreground">
-              {row.original.review_id}
-            </span>
-        )
-    },
-    {
         accessorKey: "product_id",
         header: "Product ID",
         cell: ({ row }) => (
@@ -80,7 +71,7 @@ export const columns: ColumnDef<Review>[] = [
         accessorKey: "rating",
         header: ({ column }) => {
             return (
-                <div className="hover:text-foreground">
+                <div className="flex justify-center hover:text-foreground">
                     <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
                         <span className="text-xs uppercase tracking-wider">Rating</span>
                         <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -89,55 +80,63 @@ export const columns: ColumnDef<Review>[] = [
             )
         },
         cell: ({ row }) => (
-            <span className="text-sm">
-              {row.original.rating}
-            </span>
+            <div className="w-full text-center">
+                <span className="text-sm text-muted-foreground">
+                    {row.original.rating}
+                </span>
+            </div>
         )
     },
     {
         accessorKey: "review_text",
         header: "Review Text",
         cell: ({ row }) => (
-            <span className="text-sm line-clamp-2">
+            <span className="text-sm text-muted-foreground line-clamp-2">
               {row.original.review_text}
             </span>
         )
     },
     {
-        accessorKey: "created_at",
+        accessorKey: "sentiment_score",
         header: ({ column }) => {
             return (
-                <div className="hover:text-foreground">
+                <div className="flex justify-center hover:text-foreground">
                     <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                        <span className="text-xs uppercase tracking-wider">Created At</span>
+                        <span className="text-xs uppercase tracking-wider">Sentiment Score</span>
                         <ArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 </div>
             )
         },
         cell: ({ row }) => (
-            <span className="text-xs text-muted-foreground">
-              {formatDate(row.original.created_at)}
-            </span>
+            <div className="w-full text-center">
+                <span className="text-sm text-muted-foreground">
+                    {row.original.sentiment_score}
+                </span>
+            </div>
         )
     },
     {
-        accessorKey: "updated_at",
-        header: ({ column }) => {
+        accessorKey: "polarity",
+        header: "Polarity",
+        cell: ({ row }) => {
+            const score = row.original.sentiment_score;
+
+            const getLabel = (score: number | null) => {
+                if (score === null) return "N/A";
+                if (score > 0.1) return "Positive";
+                if (score < -0.1) return "Negative";
+                return "Neutral";
+            };
+
             return (
-                <div className="hover:text-foreground">
-                    <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                        <span className="text-xs uppercase tracking-wider">Updated At</span>
-                        <ArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
+                <div className="w-full text-center">
+                    <span className="text-sm text-muted-foreground">
+                        {getLabel(row.original.sentiment_score)}
+                    </span>
                 </div>
-            )
-        },
-        cell: ({ row }) => (
-            <span className="text-xs text-muted-foreground">
-              {formatDate(row.original.updated_at)}
-            </span>
-        )
+            );
+        }
     },
     {
         id: "actions",

@@ -8,4 +8,5 @@ export interface Review {
     review_text: string;
     created_at: string;
     updated_at: string;
+    sentiment_score: number | null;
 }

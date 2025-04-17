@@ -70,7 +70,7 @@ export const columns: ColumnDef<Product>[] = [
         accessorKey: "name",
         header: "Name",
         cell: ({ row }) => (
-            <span className="text-sm">
+            <span className="text-sm text-foreground">
               {row.original.name}
             </span>
         )
@@ -79,7 +79,7 @@ export const columns: ColumnDef<Product>[] = [
         accessorKey: "category",
         header: "Category",
         cell: ({ row }) => (
-            <span className="text-sm italic text-muted-foreground">
+            <span className="text-sm text-muted-foreground">
               {row.original.category_name || "No Category"}
             </span>
         )

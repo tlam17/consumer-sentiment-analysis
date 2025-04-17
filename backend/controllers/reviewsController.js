@@ -142,7 +142,7 @@ const getAllReviews = async (req, res) => {
         const user_id = req.userId;
 
         // Fetch all reviews, ordered by most recent
-        const query = `SELECT review_id, product_id, rating, review_text, created_at, updated_at
+        const query = `SELECT review_id, product_id, rating, review_text, created_at, updated_at, sentiment_score
                        FROM reviews
                        WHERE user_id = $1
                        ORDER BY product_id DESC`;
