@@ -11,6 +11,8 @@ router.post("/upload", authMiddleware.authenticateToken, reviewsController.uploa
 router.get("/", authMiddleware.authenticateToken, reviewsController.getAllReviews);
 // Get reviews by product
 router.get("/product/:productId", authMiddleware.authenticateToken, reviewsController.getReviewsByProduct);
+// Get average sentiment
+router.get("/average-sentiment", authMiddleware.authenticateToken, reviewsController.getAverageSentiment);
 // Get a single review by ID
 router.get("/:reviewId", authMiddleware.authenticateToken, reviewsController.getReviewById);
 // Update a review

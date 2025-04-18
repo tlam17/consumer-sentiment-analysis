@@ -1,13 +1,13 @@
 "use client";
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 import { MessageCircle } from "lucide-react";
 
 import { useReviews } from "@/lib/ReviewContext";
 
 export function TotalReviewsCard() {
-  const { reviews, loading, error } = useReviews();
+  const { reviews, loading } = useReviews();
   const totalReviews = reviews.length;
 
   return (

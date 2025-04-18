@@ -280,6 +280,29 @@ const deleteReview = async (req, res) => {
     }
 };
 
+/**
+ * Get average sentiment from all reviews
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Number} Average sentiment score
+ */
+const getAverageSentiment = async (req, res) => {
+    try {
+        const user_id = req.userId;
+        // Fetch average sentiment from all reviews
+        const query = "SELECT AVG(sentiment_score) AS avg_sentiment FROM reviews WHERE user_id = $1";
+        const result = await pool.query(query, [user_id]);
+        
+        // Return average sentiment
+        res.status(200).json({ avg_sentiment: result.rows[0].avg_sentiment ?? 0 });
+    } catch (error) {
+        // Log and return error if fetching average sentiment fails
+        console.log(error);
+        res.status(500).json({ message: "Error getting average sentiment" });
+    }
+};
+
 module.exports = {
     createReview,
     upload,
@@ -288,5 +311,6 @@ module.exports = {
     getReviewsByProduct,
     getReviewById,
     updateReview,
-    deleteReview
+    deleteReview,
+    getAverageSentiment
 };
