@@ -13,6 +13,8 @@ router.get("/", authMiddleware.authenticateToken, reviewsController.getAllReview
 router.get("/product/:productId", authMiddleware.authenticateToken, reviewsController.getReviewsByProduct);
 // Get average sentiment
 router.get("/average-sentiment", authMiddleware.authenticateToken, reviewsController.getAverageSentiment);
+// Get sentiment distribution
+router.get("/sentiment-distribution", authMiddleware.authenticateToken, reviewsController.getSentimentDistribution);
 // Get a single review by ID
 router.get("/:reviewId", authMiddleware.authenticateToken, reviewsController.getReviewById);
 // Update a review

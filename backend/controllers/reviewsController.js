@@ -303,6 +303,41 @@ const getAverageSentiment = async (req, res) => {
     }
 };
 
+/**
+ * Get sentiment distribution from all reviews
+ * 
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @returns {Object} Sentiment distribution
+ */
+const getSentimentDistribution = async (req, res) => {
+    try {
+        const user_id = req.userId;
+
+        // Fetch sentiment distribution from all reviews
+        const positiveQuery = "SELECT COUNT(*) FROM reviews WHERE sentiment_score > 0.1 AND user_id = $1";
+        const neutralQuery = "SELECT COUNT(*) FROM reviews WHERE sentiment_score < 0.1 AND sentiment_score > -0.1 AND user_id = $1";
+        const negativeQuery = "SELECT COUNT(*) FROM reviews WHERE sentiment_score < -0.1 AND user_id = $1";
+
+        const [positiveResult, neutralResult, negativeResult] = await Promise.all([
+            pool.query(positiveQuery, [user_id]),
+            pool.query(neutralQuery, [user_id]),
+            pool.query(negativeQuery, [user_id])
+        ]);
+
+        // Return sentiment distribution
+        res.status(200).json({
+            positive: positiveResult.rows[0].count,
+            neutral: neutralResult.rows[0].count,
+            negative: negativeResult.rows[0].count
+        });
+    } catch (error) {
+        // Log and return error if fetching sentiment distribution fails
+        console.log(error);
+        res.status(500).json({ message: "Error getting sentiment distribution" });
+    }
+};
+
 module.exports = {
     createReview,
     upload,
@@ -312,5 +347,6 @@ module.exports = {
     getReviewById,
     updateReview,
     deleteReview,
-    getAverageSentiment
+    getAverageSentiment,
+    getSentimentDistribution
 };
